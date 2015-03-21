@@ -1,6 +1,7 @@
 package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomAdapter extends ArrayAdapter<String> {
+class CustomAdapter extends ArrayAdapter<VolunteerEvent> {
+    private static final String TAG = "mattsMessage";
 
-    CustomAdapter(Context context, String[] foods) {
-        super(context, R.layout.custom_row, foods);
+    public VolunteerEvent[] eventsArr;
+
+    public CustomAdapter(Context context, VolunteerEvent[] s) {
+        super(context, R.layout.custom_row, s);
+        eventsArr = s;
     }
 
     @Override
@@ -24,12 +29,13 @@ public class CustomAdapter extends ArrayAdapter<String> {
         TextView organizationText = (TextView) customView.findViewById(R.id.organisationText);
         TextView hoursText = (TextView) customView.findViewById(R.id.hoursText);
 
+
         //add something to set the text to
-        VolunteerEvent v = new VolunteerEvent;
-        nameText.setText();
-        descriptionText.setText();
-        organizationText.setText();
-        hoursText.setText();
+        VolunteerEvent v = eventsArr[position];
+        nameText.setText(v.getName());
+        descriptionText.setText(v.getDescription());
+        organizationText.setText(v.getOrganisation());
+        hoursText.setText(v.getHours());
 
         return customView;
     }
