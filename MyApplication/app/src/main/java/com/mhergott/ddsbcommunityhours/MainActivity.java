@@ -1,71 +1,108 @@
 package com.mhergott.ddsbcommunityhours;
 
-import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.content.Intent;
-import android.view.View;
 import android.app.Activity;
-import android.util.Log;
-import java.io.BufferedReader;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements android.support.v7.app.ActionBar.TabListener {
 
     private static final String TAG = "mattsMessage";
-    List namesList = new ArrayList();
-    String names;
+    List currentNamesList = new ArrayList();
+    String currentNames;
+    VolunteerEvent[] currentEventsArr;
+    List completedNamesList = new ArrayList();
+    String completedNames;
+    VolunteerEvent[] completedEventsArr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Read file in Internal Storage
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        try {
+            FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_PRIVATE);
+            fos.write("Swimming;".getBytes());
+            fos.close();
+        } catch (Exception e) {}
+        try {
+            FileOutputStream fos = openFileOutput("Swimming.txt", Context.MODE_PRIVATE);
+            fos.write("Swimming;frolicking in the water;City of Pickering;17;".getBytes());
+            fos.close();
+        } catch (Exception e) {}
+        try {
+            FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_PRIVATE);
+            fos.write("Landscaping;".getBytes());
+            fos.close();
+        } catch (Exception e) {}
+        try {
+            FileOutputStream fos = openFileOutput("Landscaping.txt", Context.MODE_PRIVATE);
+            fos.write("Landscaping;Lifting rocks on the regs;All Pro;500;".getBytes());
+            fos.close();
+        } catch (Exception e) {}
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Volunteer Hours");
+        actionBar.addTab(actionBar.newTab().setText("In Progress").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText("Submitted").setTabListener(this));
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        //access completed and current names files
         FileInputStream fis;
         try {
-            fis = openFileInput("names.txt");
+            fis = openFileInput("CurrentNames.txt");
             byte[] input = new byte[fis.available()];
             while (fis.read(input) != -1) {}
-            names = new String(input, "UTF-8");
+            currentNames = new String(input, "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(currentNames!=null)
+            arrCreator(currentNames, true);
+        String[] currentNamesArr = new String[currentNamesList.size()];
+        currentNamesList.toArray(currentNamesArr);
 
-        if(names!=null)
-            arrCreator(names);
+        FileInputStream fis2;
+        try {
+            fis2 = openFileInput("CompletedNames.txt");
+            byte[] input = new byte[fis2.available()];
+            while (fis2.read(input) != -1) {}
+            completedNames = new String(input, "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(completedNames!=null)
+            arrCreator(completedNames, false);
+        String[] completedNamesArr = new String[completedNamesList.size()];
+        completedNamesList.toArray(completedNamesArr);
+        //////////////////////////////////////////////////////////////////////////////////
 
-
-        String[] namesArr = new String[namesList.size()];
-        namesList.toArray(namesArr);
-
-        ArrayList<VolunteerEvent> eventList = new ArrayList<VolunteerEvent>();
-        for(int j = 0; j < namesArr.length; j++){
+        //access individual event files and save into an object array
+        ArrayList<VolunteerEvent> currentEventList = new ArrayList<VolunteerEvent>();
+        for(int j = 0; j < currentNamesArr.length; j++){
             //Read file in Internal Storage
             FileInputStream x;
             String event = null;
-            String fileName = namesArr[j] + ".txt";
+            String fileName = currentNamesArr[j] + ".txt";
             try {
                 x = openFileInput(fileName);
                 byte[] input = new byte[x.available()];
@@ -78,18 +115,40 @@ public class MainActivity extends ActionBarActivity {
             }
 
             if(event!=null)
-                eventList.add(new VolunteerEvent(event));
+                currentEventList.add(new VolunteerEvent(event));
         }
+        currentEventsArr = new VolunteerEvent[currentNamesList.size()];
+        currentEventList.toArray(currentEventsArr);
 
-        VolunteerEvent[] eventsArr = new VolunteerEvent[namesList.size()];
-        eventList.toArray(eventsArr);
+        ArrayList<VolunteerEvent> completedEventList = new ArrayList<VolunteerEvent>();
+        for(int j = 0; j < completedNamesArr.length; j++){
+            //Read file in Internal Storage
+            FileInputStream x;
+            String event = null;
+            String fileName = completedNamesArr[j] + ".txt";
+            try {
+                x = openFileInput(fileName);
+                byte[] input = new byte[x.available()];
+                while (x.read(input) != -1) {}
+                event = new String(input, "UTF-8");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        ListAdapter customAdapter = new CustomAdapter(this, eventsArr);
+            if(event!=null)
+                completedEventList.add(new VolunteerEvent(event));
+        }
+        completedEventsArr = new VolunteerEvent[completedNamesList.size()];
+        completedEventList.toArray(completedEventsArr);
+        //////////////////////////////////////////////////////////////////////////
+
+        //add current events array as default to the list view
+        ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
         ListView customListView = (ListView) findViewById(R.id.customListView);
         customListView.setAdapter(customAdapter);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,17 +172,59 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void arrCreator(String str)
+    public void arrCreator(String str, boolean x)
     {
-        if(str.indexOf(';')==-1)
-            return;
-        else if(str.indexOf(';')==(str.length()-1)){
-            namesList.add(str.substring(0, (str.indexOf(';'))));
+        if(x) {
+            if (str.indexOf(';') == -1)
+                return;
+            else if (str.indexOf(';') == (str.length() - 1)) {
+                currentNamesList.add(str.substring(0, (str.indexOf(';'))));
+                return;
+            } else
+                currentNamesList.add(str.substring(0, (str.indexOf(';'))));
+            arrCreator(str.substring((str.indexOf(';')) + 1), x);
             return;
         }
-        else
-            namesList.add(str.substring(0, (str.indexOf(';'))));
-        arrCreator(str.substring((str.indexOf(';'))+1));
-        return;
+        else{
+            if (str.indexOf(';') == -1)
+                return;
+            else if (str.indexOf(';') == (str.length() - 1)) {
+                completedNamesList.add(str.substring(0, (str.indexOf(';'))));
+                return;
+            } else
+                completedNamesList.add(str.substring(0, (str.indexOf(';'))));
+            arrCreator(str.substring((str.indexOf(';')) + 1), x);
+            return;
+        }
+    }
+
+    @Override
+    public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        if(tab.getPosition()==0){
+            setContentView(R.layout.activity_main);
+            if(currentEventsArr!=null) {
+                ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
+                ListView customListView = (ListView) findViewById(R.id.customListView);
+                customListView.setAdapter(customAdapter);
+            }
+        }
+        else{
+            setContentView(R.layout.activity_main);
+            if(completedEventsArr!=null) {
+                ListAdapter customAdapter = new CustomAdapter(this, completedEventsArr);
+                ListView customListView = (ListView) findViewById(R.id.customListView);
+                customListView.setAdapter(customAdapter);
+            }
+        }
+    }
+
+    @Override
+    public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
     }
 }
