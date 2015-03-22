@@ -29,28 +29,7 @@ public class VolunteerEvent extends ActionBarActivity {
     //pictures??
 
     public VolunteerEvent(String str) {
-        /*
-        //////////////////////////////////////////////////////
-        FileInputStream fis;
-        String fileName = name + ".txt";
-        Log.i(TAG, fileName);
-        try {
-            fis = openFileInput(fileName);
-            byte[] input = new byte[fis.available()];
-            while (fis.read(input) != -1) {
-            }
-            str = new String(input, "UTF-8");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //////////////////////////////////////////////////////
-        */
 
-
-        //str = "swimming;swam at rec complex;City of Pickering;14;";
-        /////////////////////////////////////////////////////
 
         name = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);

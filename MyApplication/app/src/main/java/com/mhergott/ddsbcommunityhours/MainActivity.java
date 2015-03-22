@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import java.io.FileInputStream;
@@ -27,6 +31,8 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     List completedNamesList = new ArrayList();
     String completedNames;
     VolunteerEvent[] completedEventsArr;
+    private Context context = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +42,17 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         try {
             FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_PRIVATE);
-            fos.write("Swimming;".getBytes());
+            fos.write("Swimming;Timekeeping;".getBytes());
             fos.close();
         } catch (Exception e) {}
         try {
             FileOutputStream fos = openFileOutput("Swimming.txt", Context.MODE_PRIVATE);
             fos.write("Swimming;frolicking in the water;City of Pickering;17;".getBytes());
+            fos.close();
+        } catch (Exception e) {}
+        try {
+            FileOutputStream fos = openFileOutput("Timekeeping.txt", Context.MODE_PRIVATE);
+            fos.write("Timekeeping;pushing buttons watching hockey;PHA;200;".getBytes());
             fos.close();
         } catch (Exception e) {}
         try {
@@ -148,6 +159,18 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
         ListView customListView = (ListView) findViewById(R.id.customListView);
         customListView.setAdapter(customAdapter);
+
+        int totalHours = 0;
+        for(int a = 0; a < currentEventsArr.length; a++){
+            totalHours += Integer.valueOf((currentEventsArr[a]).getHours());
+        }
+        for(int a = 0; a < completedEventsArr.length; a++){
+            totalHours += Integer.valueOf((completedEventsArr[a]).getHours());
+        }
+        setHours(String.valueOf(totalHours));
+        //////////////////////////////////////////////////////////////////////////
+
+
     }
 
     @Override
@@ -201,7 +224,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     @Override
     public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         if(tab.getPosition()==0){
-            setContentView(R.layout.activity_main);
             if(currentEventsArr!=null) {
                 ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
                 ListView customListView = (ListView) findViewById(R.id.customListView);
@@ -209,7 +231,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             }
         }
         else{
-            setContentView(R.layout.activity_main);
             if(completedEventsArr!=null) {
                 ListAdapter customAdapter = new CustomAdapter(this, completedEventsArr);
                 ListView customListView = (ListView) findViewById(R.id.customListView);
@@ -226,5 +247,10 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     @Override
     public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
+    }
+
+    public void setHours(String str){
+        MainActivityFooter foot = (MainActivityFooter) getSupportFragmentManager().findFragmentById(R.id.footer);
+        foot.setHours(str);
     }
 }

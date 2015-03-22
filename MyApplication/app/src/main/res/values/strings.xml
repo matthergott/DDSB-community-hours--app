@@ -7,5 +7,6 @@
     <string name="title_activity_add_personal_information">AddPersonalInformation</string>
     <string name="Personal_Info_Text">Personal Information</string>
     <string name="addName">Name</string>
+    <string name="footer_text">Medium Text</string>
 
 </resources>
