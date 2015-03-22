@@ -8,5 +8,9 @@
     <string name="Personal_Info_Text">Personal Information</string>
     <string name="addName">Name</string>
     <string name="footer_text">Medium Text</string>
+    <string name="title_activity_add_new_log">AddNewLog</string>
+    <string name="singletimeactivity">Single-time Activity</string>
+    <string name="recurringactivitybutton">Recurring Activity</string>
+    <string name="title_activity_get_single_activity_info">getSingleActivityInfo</string>
 
 </resources>
