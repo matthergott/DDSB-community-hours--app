@@ -1,11 +1,16 @@
 package com.mhergott.ddsbcommunityhours;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 
 public class AddNewLog extends ActionBarActivity {
@@ -13,7 +18,55 @@ public class AddNewLog extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_new_log);
+        //setContentView(R.layout.activity_add_new_log);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Add a New Log");
+
+        /////////////////////////////////////////////////////////////////
+        RelativeLayout addLogLayout = new RelativeLayout(this);
+
+        RelativeLayout.LayoutParams singleButtonDetails = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        RelativeLayout.LayoutParams recurringButtonDetails = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
+        float density  = getResources().getDisplayMetrics().density;
+        float dpHeight = outMetrics.heightPixels / density;
+        double thirdOfHeight = (float) (dpHeight/3.0);
+
+        Button singleButton = new Button(this);
+        Button recurringButton = new Button(this);
+        singleButton.setId(1);
+        recurringButton.setId(2);
+
+        singleButtonDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        singleButtonDetails.setMargins(0, (int) thirdOfHeight, 0, 0);
+        recurringButtonDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        recurringButtonDetails.addRule(RelativeLayout.BELOW, singleButton.getId());
+        recurringButtonDetails.setMargins(0, (int) thirdOfHeight, 0, 0);
+
+        singleButton.setText("Single-Time Activity");
+        recurringButton.setText("Recurring Activity");
+
+        addLogLayout.addView(singleButton, singleButtonDetails);
+        addLogLayout.addView(recurringButton, recurringButtonDetails);
+        setContentView(addLogLayout);
+
+        singleButton.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        goToSingleActivity(v);
+                    }
+                }
+        );
+        /////////////////////////////////////////////////////////////////
     }
 
 
@@ -38,11 +91,11 @@ public class AddNewLog extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public void gotoSingleActivity(View view){
+    public void goToSingleActivity(View view){
         Intent intent = new Intent(this,getSingleActivityInfo.class);
         startActivity(intent);
     }
-    public void gotoRecurringActivity(View view){
+    public void goToRecurringActivity(View view){
        // Intent intent = new Intent(this,DisplayMessageActivity.class);
     }
 }
