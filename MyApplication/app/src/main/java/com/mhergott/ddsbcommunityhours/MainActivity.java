@@ -56,6 +56,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             fos.write("Timekeeping;pushing buttons watching hockey;PHA;200;".getBytes());
             fos.close();
         } catch (Exception e) {}
+        /*
         try {
             FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_PRIVATE);
             fos.write("Landscaping;".getBytes());
@@ -65,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             FileOutputStream fos = openFileOutput("Landscaping.txt", Context.MODE_PRIVATE);
             fos.write("Landscaping;Lifting rocks on the regs;All Pro;500;".getBytes());
             fos.close();
-        } catch (Exception e) {}
+        } catch (Exception e) {} */
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ActionBar actionBar = getSupportActionBar();
@@ -188,6 +189,10 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             case R.id.main_add_new_log:
                 Intent i = new Intent(this, AddNewLog.class);
                 startActivity(i);
+                return true;
+            case R.id.main_add_personal_info:
+                Intent j = new Intent(this, AddPersonalInfo.class);
+                startActivity(j);
                 return true;
 
             default:

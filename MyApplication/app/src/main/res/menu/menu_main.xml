@@ -7,5 +7,10 @@
         android:title="Add New Log"
         android:orderInCategory="1"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/main_add_personal_info"
+        android:title="Add Personal Info"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
 
 </menu>

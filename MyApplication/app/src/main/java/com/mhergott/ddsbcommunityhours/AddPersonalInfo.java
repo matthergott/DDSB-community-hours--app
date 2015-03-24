@@ -4,22 +4,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 
 
-public class AddPersonalInformation extends ActionBarActivity {
+public class AddPersonalInfo extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_personal_information);
+        setContentView(R.layout.activity_add_personal_info);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_personal_information, menu);
+        getMenuInflater().inflate(R.menu.menu_add_personal_info, menu);
         return true;
     }
 
