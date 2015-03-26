@@ -121,7 +121,7 @@ public class getSingleActivityInfo extends ActionBarActivity {
                         if(organisation.getText().toString().equals("")) {
                             isError = true;
                             organisation.setBackgroundColor(Color.RED);
-                            organisation.setHint("Please enter organisation hosting event");
+                            organisation.setHint("Please enter organisation");
                         }
                         else{
                             organisation.setBackgroundColor(Color.TRANSPARENT);
@@ -129,7 +129,7 @@ public class getSingleActivityInfo extends ActionBarActivity {
                         if(hours.getText().toString().equals("")) {
                             isError = true;
                             hours.setBackgroundColor(Color.RED);
-                            hours.setHint("Please enter organisation hosting event");
+                            hours.setHint("Please enter hours completed");
                         }
                         else{
                             hours.setBackgroundColor(Color.TRANSPARENT);
@@ -141,7 +141,7 @@ public class getSingleActivityInfo extends ActionBarActivity {
                                 isError = true;
                                 hours.setBackgroundColor(Color.RED);
                                 hours.setText("");
-                                hours.setHint("Please enter the number of hours completed");
+                                hours.setHint("Please enter hours completed");
                                 a = hours.getText().toString().length();
                             }
                         }

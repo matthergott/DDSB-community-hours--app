@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,7 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements android.support.v7.app.ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements android.support.v7.app.ActionBar.TabListener, SelectLogTypeDialog.NoticeDialogListener {
 
     private static final String TAG = "mattsMessage";
     List currentNamesList = new ArrayList();
@@ -187,8 +188,10 @@ public class MainActivity extends ActionBarActivity implements android.support.v
 
         switch(item.getItemId()){
             case R.id.main_add_new_log:
-                Intent i = new Intent(this, AddNewLog.class);
-                startActivity(i);
+                //Intent i = new Intent(this, AddNewLog.class);
+                //startActivity(i);
+
+                selectEventType();
                 return true;
             case R.id.main_add_personal_info:
                 Intent j = new Intent(this, AddPersonalInfo.class);
@@ -258,5 +261,21 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     public void setHours(String str){
         MainActivityFooter foot = (MainActivityFooter) getSupportFragmentManager().findFragmentById(R.id.footer);
         foot.setHours(str);
+    }
+
+    public void selectEventType(){
+        DialogFragment newFragment = new SelectLogTypeDialog();
+        newFragment.show(getSupportFragmentManager(), "newLog");
+    }
+
+    @Override
+    public void onDialogSingleClick(DialogFragment dialog) {
+        Intent intent = new Intent(this,getSingleActivityInfo.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDialogRecurringClick(DialogFragment dialog) {
+        return;
     }
 }
