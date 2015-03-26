@@ -2,6 +2,7 @@ package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ public class getSingleActivityInfo extends ActionBarActivity {
 
         RelativeLayout singleActivityLayout = new RelativeLayout(this);
 
-        RelativeLayout.LayoutParams nameTextDetails = new RelativeLayout.LayoutParams(
+        final RelativeLayout.LayoutParams nameTextDetails = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
         );
@@ -82,10 +83,10 @@ public class getSingleActivityInfo extends ActionBarActivity {
         submitButtonDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
         submitButtonDetails.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-        nameTxt.setText("Name of Event");
-        description.setText("Brief Description");
-        organisation.setText("Organisation");
-        hours.setText("Hours Completed");
+        nameTxt.setHint("Name of Event");
+        description.setHint("Brief Description");
+        organisation.setHint("Organisation");
+        hours.setHint("Hours Completed");
         submit.setText("Done");
 
         singleActivityLayout.addView(nameTxt, nameTextDetails);
@@ -99,25 +100,77 @@ public class getSingleActivityInfo extends ActionBarActivity {
                 new Button.OnClickListener(){
                     public void onClick(View v){
 
-                        String toFile =
-                                nameTxt.getText().toString() + ";" +
-                                description.getText().toString() + ";" +
-                                organisation.getText().toString() + ";" +
-                                hours.getText().toString() + ";";
-                        String nameStr = (nameTxt.getText()).toString();
+                        boolean isError = false;
 
-                        try {
-                            FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_APPEND);
-                            fos.write((nameStr + ";").getBytes());
-                            fos.close();
-                        } catch (Exception e) {}
-                        try {
-                            FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
-                            fos.write((toFile).getBytes());
-                            fos.close();
-                        } catch (Exception e) {}
+                        if(nameTxt.getText().toString().equals("")) {
+                            isError = true;
+                            nameTxt.setBackgroundColor(Color.RED);
+                            nameTxt.setHint("Please enter name of event");
+                        }
+                        else{
+                            nameTxt.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                        if(description.getText().toString().equals("")) {
+                            isError = true;
+                            description.setBackgroundColor(Color.RED);
+                            description.setHint("Please enter description of event");
+                        }
+                        else{
+                            description.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                        if(organisation.getText().toString().equals("")) {
+                            isError = true;
+                            organisation.setBackgroundColor(Color.RED);
+                            organisation.setHint("Please enter organisation hosting event");
+                        }
+                        else{
+                            organisation.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                        if(hours.getText().toString().equals("")) {
+                            isError = true;
+                            hours.setBackgroundColor(Color.RED);
+                            hours.setHint("Please enter organisation hosting event");
+                        }
+                        else{
+                            hours.setBackgroundColor(Color.TRANSPARENT);
+                        }
 
-                        submitEvent(v);
+                        for (int a = 0; a < hours.getText().toString().length(); a++){
+                            int x = (int) hours.getText().toString().charAt(a);
+                            if(x<48 || x>57) {
+                                isError = true;
+                                hours.setBackgroundColor(Color.RED);
+                                hours.setText("");
+                                hours.setHint("Please enter the number of hours completed");
+                                a = hours.getText().toString().length();
+                            }
+                        }
+
+                        if(!isError) {
+                            String toFile =
+                                    nameTxt.getText().toString() + ";" +
+                                            description.getText().toString() + ";" +
+                                            organisation.getText().toString() + ";" +
+                                            hours.getText().toString() + ";";
+                            String nameStr = (nameTxt.getText()).toString();
+
+                            try {
+                                FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_APPEND);
+                                fos.write((nameStr + ";").getBytes());
+                                fos.close();
+                            } catch (Exception e) {
+                            }
+                            try {
+                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
+                                fos.write((toFile).getBytes());
+                                fos.close();
+                            } catch (Exception e) {
+                            }
+
+                            submitEvent(v);
+                        }
+                        else
+                            return;
                     }
                 }
         );
@@ -147,10 +200,8 @@ public class getSingleActivityInfo extends ActionBarActivity {
     }
 
     public void submitEvent(View view){
-
-
-
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }
