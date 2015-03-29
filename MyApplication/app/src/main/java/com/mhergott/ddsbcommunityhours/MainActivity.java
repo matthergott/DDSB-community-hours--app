@@ -15,8 +15,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +44,20 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Determine which bundle to use; either the saved instance or a bundle
+        // that has been passed in through an intent.
+        Bundle bundle = getIntent().getExtras();
+        if (bundle == null) {
+            bundle = savedInstanceState;
+        }
+        // Initialize members with bundle or default values.
+        int position;
+        if (bundle != null) {
+            position = bundle.getInt("position_value");
+        } else {
+            position = 0;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         try {
             FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_PRIVATE);
@@ -57,17 +74,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             fos.write("Timekeeping;pushing buttons watching hockey;PHA;200;".getBytes());
             fos.close();
         } catch (Exception e) {}
-        /*
-        try {
-            FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_PRIVATE);
-            fos.write("Landscaping;".getBytes());
-            fos.close();
-        } catch (Exception e) {}
-        try {
-            FileOutputStream fos = openFileOutput("Landscaping.txt", Context.MODE_PRIVATE);
-            fos.write("Landscaping;Lifting rocks on the regs;All Pro;500;".getBytes());
-            fos.close();
-        } catch (Exception e) {} */
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ActionBar actionBar = getSupportActionBar();
@@ -90,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         }
         if(currentNames!=null)
             arrCreator(currentNames, true);
-        String[] currentNamesArr = new String[currentNamesList.size()];
+        final String[] currentNamesArr = new String[currentNamesList.size()];
         currentNamesList.toArray(currentNamesArr);
 
         FileInputStream fis2;
@@ -106,9 +112,8 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         }
         if(completedNames!=null)
             arrCreator(completedNames, false);
-        String[] completedNamesArr = new String[completedNamesList.size()];
+        final String[] completedNamesArr = new String[completedNamesList.size()];
         completedNamesList.toArray(completedNamesArr);
-        //////////////////////////////////////////////////////////////////////////////////
 
         //access individual event files and save into an object array
         ArrayList<VolunteerEvent> currentEventList = new ArrayList<VolunteerEvent>();
@@ -156,12 +161,22 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         }
         completedEventsArr = new VolunteerEvent[completedNamesList.size()];
         completedEventList.toArray(completedEventsArr);
-        //////////////////////////////////////////////////////////////////////////
 
         //add current events array as default to the list view
         ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
         ListView customListView = (ListView) findViewById(R.id.customListView);
         customListView.setAdapter(customAdapter);
+
+        customListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        VolunteerEvent v = (VolunteerEvent) parent.getItemAtPosition(position);
+                        String str = v.getName();
+                        displayEvent(view, str);
+                    }
+                }
+        );
 
         int totalHours = 0;
         for(int a = 0; a < currentEventsArr.length; a++){
@@ -171,9 +186,8 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             totalHours += Integer.valueOf((completedEventsArr[a]).getHours());
         }
         setHours(String.valueOf(totalHours));
-        //////////////////////////////////////////////////////////////////////////
 
-
+        actionBar.setSelectedNavigationItem(position);
     }
 
     @Override
@@ -247,35 +261,35 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             }
         }
     }
-
     @Override
-    public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
-
+    public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
     @Override
-    public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
 
-    }
 
     public void setHours(String str){
         MainActivityFooter foot = (MainActivityFooter) getSupportFragmentManager().findFragmentById(R.id.footer);
         foot.setHours(str);
     }
 
+
     public void selectEventType(){
         DialogFragment newFragment = new SelectLogTypeDialog();
         newFragment.show(getSupportFragmentManager(), "newLog");
     }
-
     @Override
     public void onDialogSingleClick(DialogFragment dialog) {
         Intent intent = new Intent(this,getSingleActivityInfo.class);
         startActivity(intent);
     }
-
     @Override
     public void onDialogRecurringClick(DialogFragment dialog) {
         return;
+    }
+
+    public void displayEvent(View view, String str){
+        Intent intent = new Intent(this,EventDetails.class);
+        intent.putExtra("event_name",str);
+        startActivity(intent);
     }
 }

@@ -13,5 +13,6 @@
     <string name="recurringactivitybutton">Recurring Activity</string>
     <string name="title_activity_get_single_activity_info">getSingleActivityInfo</string>
     <string name="title_activity_add_personal_info">AddPersonalInfo</string>
+    <string name="title_activity_event_details">EventDetails</string>
 
 </resources>

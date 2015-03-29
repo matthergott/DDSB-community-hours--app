@@ -201,6 +201,7 @@ public class getSingleActivityInfo extends ActionBarActivity {
 
     public void submitEvent(View view){
         Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("position_value",1);
         startActivity(intent);
         finish();
     }

@@ -12,17 +12,8 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".AddPersonalInformation"
-            android:label="@string/title_activity_add_personal_information"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mhergott.ddsbcommunityhours.MainActivity" />
         </activity>
         <activity
             android:name=".AddNewLog"
@@ -35,7 +26,7 @@
         <activity
             android:name=".getSingleActivityInfo"
             android:label="@string/title_activity_get_single_activity_info"
-            android:parentActivityName=".AddNewLog" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mhergott.ddsbcommunityhours.AddNewLog" />
@@ -43,6 +34,14 @@
         <activity
             android:name=".AddPersonalInfo"
             android:label="@string/title_activity_add_personal_info"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mhergott.ddsbcommunityhours.MainActivity" />
+        </activity>
+        <activity
+            android:name=".EventDetails"
+            android:label="@string/title_activity_event_details"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
