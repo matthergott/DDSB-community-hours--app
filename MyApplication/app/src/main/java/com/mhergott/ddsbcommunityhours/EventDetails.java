@@ -25,6 +25,7 @@ public class EventDetails extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("Event Details");
 
         Bundle bundle = getIntent().getExtras();
         if (bundle == null) {
