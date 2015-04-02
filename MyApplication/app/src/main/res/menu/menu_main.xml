@@ -1,16 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-
     <item
         android:id="@+id/main_add_new_log"
         android:title="Add New Log"
         android:orderInCategory="1"
         app:showAsAction="never" />
     <item
-        android:id="@+id/main_add_personal_info"
-        android:title="Add Personal Info"
+        android:id="@+id/main_view_personal_info"
+        android:title="View Personal Info"
         android:orderInCategory="2"
         app:showAsAction="never" />
-
 </menu>

@@ -19,6 +19,10 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements android.support.v7.app.ActionBar.TabListener, SelectLogTypeDialog.NoticeDialogListener {
+public class MainActivity extends ActionBarActivity implements android.support.v7.app.ActionBar.TabListener, SelectLogTypeDialog.NoticeDialogListener, ViewPersonalInfoDialog.NoticeDialogListener {
 
     private static final String TAG = "mattsMessage";
     List currentNamesList = new ArrayList();
@@ -37,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     String completedNames;
     VolunteerEvent[] completedEventsArr;
     private Context context = null;
-
+    String personalInformation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,23 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             position = bundle.getInt("position_value");
         } else {
             position = 0;
+        }
+
+        FileInputStream fis2;
+        try {
+            fis2 = openFileInput("personalInfo.txt");
+            byte[] input = new byte[fis2.available()];
+            while (fis2.read(input) != -1) {}
+            personalInformation = new String(input, "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(personalInformation==null){
+            Intent j = new Intent(this, AddPersonalInfo.class);
+            startActivity(j);
+            finish();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +120,11 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         final String[] currentNamesArr = new String[currentNamesList.size()];
         currentNamesList.toArray(currentNamesArr);
 
-        FileInputStream fis2;
+        FileInputStream fis3;
         try {
-            fis2 = openFileInput("CompletedNames.txt");
-            byte[] input = new byte[fis2.available()];
-            while (fis2.read(input) != -1) {}
+            fis3 = openFileInput("CompletedNames.txt");
+            byte[] input = new byte[fis3.available()];
+            while (fis3.read(input) != -1) {}
             completedNames = new String(input, "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -179,11 +200,15 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         );
 
         int totalHours = 0;
-        for(int a = 0; a < currentEventsArr.length; a++){
-            totalHours += Integer.valueOf((currentEventsArr[a]).getHours());
+        if(currentEventsArr!=null) {
+            for (int a = 0; a < currentEventsArr.length; a++) {
+                totalHours += Integer.valueOf((currentEventsArr[a]).getHours());
+            }
         }
-        for(int a = 0; a < completedEventsArr.length; a++){
-            totalHours += Integer.valueOf((completedEventsArr[a]).getHours());
+        if(completedEventsArr!=null) {
+            for (int a = 0; a < completedEventsArr.length; a++) {
+                totalHours += Integer.valueOf((completedEventsArr[a]).getHours());
+            }
         }
         setHours(String.valueOf(totalHours));
 
@@ -199,19 +224,13 @@ public class MainActivity extends ActionBarActivity implements android.support.v
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch(item.getItemId()){
             case R.id.main_add_new_log:
-                //Intent i = new Intent(this, AddNewLog.class);
-                //startActivity(i);
-
                 selectEventType();
                 return true;
-            case R.id.main_add_personal_info:
-                Intent j = new Intent(this, AddPersonalInfo.class);
-                startActivity(j);
+            case R.id.main_view_personal_info:
+                viewPersonalInfo(personalInformation);
                 return true;
-
             default:
                 super.onOptionsItemSelected(item);
         }
@@ -277,6 +296,11 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         DialogFragment newFragment = new SelectLogTypeDialog();
         newFragment.show(getSupportFragmentManager(), "newLog");
     }
+    public void viewPersonalInfo(String str){
+        DialogFragment f = new ViewPersonalInfoDialog();
+        // Supply str input as an argument.
+        f.show(getSupportFragmentManager(), "personalInfo");
+    }
     @Override
     public void onDialogSingleClick(DialogFragment dialog) {
         Intent intent = new Intent(this,getSingleActivityInfo.class);
@@ -291,5 +315,16 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         Intent intent = new Intent(this,EventDetails.class);
         intent.putExtra("event_name",str);
         startActivity(intent);
+    }
+
+    @Override
+    public void onDialogEditInfo(DialogFragment dialog) {
+        Intent intent = new Intent(this,AddPersonalInfo.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDialogCancel(DialogFragment dialog) {
+        return;
     }
 }

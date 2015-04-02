@@ -15,4 +15,89 @@
     <string name="title_activity_add_personal_info">AddPersonalInfo</string>
     <string name="title_activity_event_details">EventDetails</string>
 
+    <string-array name="schools">
+        <item>[Choose a School]</item>
+        <item>Ajax HS</item>
+        <item>Anderson CVI</item>
+        <item>Brock HS</item>
+        <item>Donald A Wilson SS</item>
+        <item>Dunbarton HS</item>
+        <item>DASS</item>
+        <item>Durham Continuing Ed</item>
+        <item>Eastdale CVI</item>
+        <item>GL Roberts CVI</item>
+        <item>Grove School</item>
+        <item>Henry Street HS</item>
+        <item>J Clarke Richardson Collegiate</item>
+        <item>Maxwell Heights SS</item>
+        <item>O\'Neill CVI</item>
+        <item>Oshawa Central CI</item>
+        <item>Pickering HS</item>
+        <item>Pine Ridge SS</item>
+        <item>Port Perry SS</item>
+        <item>RS McLaughlin CVI</item>
+        <item>Sinclair SS</item>
+        <item>Uxbridge SS</item>
+    </string-array>
+    <string-array name="days">
+        <item>[day]</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+    </string-array>
+    <string-array name="months">
+        <item>[month]</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="years">
+        <item>[year]</item>
+        <item>2002</item>
+        <item>2001</item>
+        <item>2000</item>
+        <item>1999</item>
+        <item>1998</item>
+        <item>1997</item>
+        <item>1996</item>
+        <item>1995</item>
+    </string-array>
+
 </resources>

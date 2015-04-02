@@ -23,11 +23,12 @@ public class getSingleActivityInfo extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_get_single_activity_info);
+        setContentView(R.layout.activity_get_single_activity_info);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Single Activity");
 
+        /*
         RelativeLayout singleActivityLayout = new RelativeLayout(this);
 
         final RelativeLayout.LayoutParams nameTextDetails = new RelativeLayout.LayoutParams(
@@ -53,7 +54,9 @@ public class getSingleActivityInfo extends ActionBarActivity {
         float density  = getResources().getDisplayMetrics().density;
         float pxHeight = outMetrics.heightPixels / density;
         double fourthOfHeight = (float) (pxHeight/5.0);
+        */
 
+        /*
         final EditText nameTxt = new EditText(this);
         nameTxt.setId(1);
         final EditText description = new EditText(this);
@@ -62,7 +65,16 @@ public class getSingleActivityInfo extends ActionBarActivity {
         organisation.setId(3);
         final EditText hours = new EditText(this);
         hours.setId(4);
+        */
 
+        final EditText nameTxt = (EditText) findViewById(R.id.name_single);
+        final EditText description = (EditText) findViewById(R.id.description_single);
+        final EditText organisation = (EditText) findViewById(R.id.organisation_single);
+        final EditText hours = (EditText) findViewById(R.id.hours_single);
+        Button submit = (Button) findViewById(R.id.submit_single);
+
+
+        /*
         nameTextDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
         nameTextDetails.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         descriptionTextDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -94,7 +106,8 @@ public class getSingleActivityInfo extends ActionBarActivity {
         singleActivityLayout.addView(organisation, organisationTextDetails);
         singleActivityLayout.addView(hours, hoursTextDetails);
         singleActivityLayout.addView(submit, submitButtonDetails);
-        setContentView(singleActivityLayout);
+        */
+
 
         submit.setOnClickListener(
                 new Button.OnClickListener(){
@@ -144,6 +157,12 @@ public class getSingleActivityInfo extends ActionBarActivity {
                                 hours.setHint("Please enter hours completed");
                                 a = hours.getText().toString().length();
                             }
+                        }
+                        if(Integer.valueOf(hours.getText().toString())<=0){
+                            isError = true;
+                            hours.setBackgroundColor(Color.RED);
+                            hours.setText("");
+                            hours.setHint("Please enter hours completed");
                         }
 
                         if(!isError) {
