@@ -100,4 +100,8 @@
         <item>1995</item>
     </string-array>
 
+    <string name="title_activity_get_recurring_activity_info">GetRecurringActivityInfo</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_add_hours_recurring_event">AddHoursRecurringEvent</string>
+
 </resources>

@@ -9,12 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-class CustomAdapter extends ArrayAdapter<VolunteerEvent> {
+class MainCustomAdapter extends ArrayAdapter<VolunteerEvent> {
     private static final String TAG = "mattsMessage";
 
     public VolunteerEvent[] eventsArr;
 
-    public CustomAdapter(Context context, VolunteerEvent[] s) {
+    public MainCustomAdapter(Context context, VolunteerEvent[] s) {
         super(context, R.layout.custom_row, s);
         eventsArr = s;
     }

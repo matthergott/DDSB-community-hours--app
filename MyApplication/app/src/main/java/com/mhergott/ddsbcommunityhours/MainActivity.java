@@ -1,32 +1,21 @@
 package com.mhergott.ddsbcommunityhours;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +31,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     VolunteerEvent[] completedEventsArr;
     private Context context = null;
     String personalInformation;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +45,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             bundle = savedInstanceState;
         }
         // Initialize members with bundle or default values.
-        int position;
         if (bundle != null) {
             position = bundle.getInt("position_value");
         } else {
@@ -80,6 +69,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
         try {
             FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_PRIVATE);
             fos.write("Swimming;Timekeeping;".getBytes());
@@ -95,9 +85,10 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             fos.write("Timekeeping;pushing buttons watching hockey;PHA;200;".getBytes());
             fos.close();
         } catch (Exception e) {}
+        */
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Volunteer Hours");
         actionBar.addTab(actionBar.newTab().setText("In Progress").setTabListener(this));
         actionBar.addTab(actionBar.newTab().setText("Submitted").setTabListener(this));
@@ -184,7 +175,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         completedEventList.toArray(completedEventsArr);
 
         //add current events array as default to the list view
-        ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
+        ListAdapter customAdapter = new MainCustomAdapter(this, currentEventsArr);
         ListView customListView = (ListView) findViewById(R.id.customListView);
         customListView.setAdapter(customAdapter);
 
@@ -194,7 +185,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         VolunteerEvent v = (VolunteerEvent) parent.getItemAtPosition(position);
                         String str = v.getName();
-                        displayEvent(view, str);
+                        displayEvent(view, str, actionBar.getSelectedTab());
                     }
                 }
         );
@@ -267,14 +258,14 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         if(tab.getPosition()==0){
             if(currentEventsArr!=null) {
-                ListAdapter customAdapter = new CustomAdapter(this, currentEventsArr);
+                ListAdapter customAdapter = new MainCustomAdapter(this, currentEventsArr);
                 ListView customListView = (ListView) findViewById(R.id.customListView);
                 customListView.setAdapter(customAdapter);
             }
         }
         else{
             if(completedEventsArr!=null) {
-                ListAdapter customAdapter = new CustomAdapter(this, completedEventsArr);
+                ListAdapter customAdapter = new MainCustomAdapter(this, completedEventsArr);
                 ListView customListView = (ListView) findViewById(R.id.customListView);
                 customListView.setAdapter(customAdapter);
             }
@@ -308,12 +299,15 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     }
     @Override
     public void onDialogRecurringClick(DialogFragment dialog) {
-        return;
+        Intent intent = new Intent(this,GetRecurringActivityInfo.class);
+        startActivity(intent);
     }
 
-    public void displayEvent(View view, String str){
+    public void displayEvent(View view, String str, android.support.v7.app.ActionBar.Tab tab){
+        int tabSelected = tab.getPosition();
         Intent intent = new Intent(this,EventDetails.class);
         intent.putExtra("event_name",str);
+        intent.putExtra("tab",tabSelected);
         startActivity(intent);
     }
 

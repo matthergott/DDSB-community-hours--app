@@ -51,7 +51,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long id) {
-                schoolSelected = arg0.getItemAtPosition(position).toString();;//saving the value selected
+                schoolSelected = arg0.getItemAtPosition(position).toString();//saving the value selected
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {}
@@ -123,17 +123,17 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String nameTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
-        personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
-        String schoolTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
-        personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
-        String dayTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
-        personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
-        String monthTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
-        personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
-        String yearTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
-
         if(personalInformation!=null){
+            String nameTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
+            personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
+            String schoolTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
+            personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
+            String dayTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
+            personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
+            String monthTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
+            personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
+            String yearTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
+
             EditText namePersonal = (EditText) findViewById(R.id.name_personal);
             namePersonal.setText(nameTxt);
             schools.setSelection(getIndex(schools, schoolTxt));

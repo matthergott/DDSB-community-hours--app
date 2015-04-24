@@ -37,6 +37,8 @@ public class SelectLogTypeDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         if(which==0)
                             mListener.onDialogSingleClick(SelectLogTypeDialog.this);
+                        if(which==1)
+                            mListener.onDialogRecurringClick(SelectLogTypeDialog.this);
                     }
                 });
         return builder.create();
