@@ -130,6 +130,27 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
         sub = (Button) findViewById(R.id.bSub);
         display = (TextView) findViewById(R.id.numPickerDisplay);
         display.setText("" + counter);
+
+        add.setOnTouchListener(new NumberPickerListener(400, 100, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter++;
+                display.setText("" + counter);
+            }
+        }));
+        sub.setOnTouchListener(new NumberPickerListener(400, 100, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter--;
+                if(counter < 0){
+                    counter++;
+                    return;
+                }
+                display.setText("" + counter);
+            }
+        }));
+
+        /*
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,6 +177,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 display.setText("" + counter);
             }
         });
+        */
     }
 
     private String monthConverter(int month) {
