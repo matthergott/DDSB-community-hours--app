@@ -123,7 +123,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(personalInformation!=null){
+        if(personalInformation!=null){ //check if there is information already saved and treat the text file
             String nameTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
             personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
             String schoolTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
@@ -136,7 +136,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
 
             EditText namePersonal = (EditText) findViewById(R.id.name_personal);
             namePersonal.setText(nameTxt);
-            schools.setSelection(getIndex(schools, schoolTxt));
+            schools.setSelection(getIndex(schools, schoolTxt)); //set spinners to information that is already saved
             day.setSelection(getIndex(day, dayTxt));
             month.setSelection(getIndex(month, monthTxt));
             year.setSelection(getIndex(year, yearTxt));

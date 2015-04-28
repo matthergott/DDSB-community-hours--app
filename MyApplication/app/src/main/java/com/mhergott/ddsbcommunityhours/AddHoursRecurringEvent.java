@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 public class AddHoursRecurringEvent extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
@@ -59,6 +60,11 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
         v = new VolunteerEvent(event,0);
 
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR); // get the current year
+        int currentMonth = cal.get(Calendar.MONTH) + 1; // month is 0 based so 1 must be added
+        int currentDay = cal.get(Calendar.DAY_OF_MONTH); // current day in the month
+
         //code for date picking spinners
         day = (Spinner) findViewById(R.id.daySpinnerAddHours);
         day.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -92,6 +98,12 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
         month.setAdapter(adapter2);
         month.setOnItemSelectedListener(this);
 
+        //create array for year using the current year
+        String[] yearArray = new String[6];
+        yearArray[0] = "[year]";
+        for(int a = 1, yearCopy = currentYear; a<6; a++, yearCopy--)
+            yearArray[a] = String.valueOf(yearCopy);
+
         year = (Spinner) findViewById(R.id.yearSpinnerAddHours);
         year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,11 +114,15 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {}
         });
-        ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this,
-                R.array.years, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, yearArray);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         year.setAdapter(adapter3);
         year.setOnItemSelectedListener(this);
+
+        day.setSelection(getIndex(day, String.valueOf(currentDay))); //set spinners to current date
+        month.setSelection(getIndex(month, monthConverter(currentMonth)));
+        //month.setSelection(getIndex(month, "April"));
+        year.setSelection(getIndex(year, String.valueOf(currentYear)));
 
         //code for number picker
         counter = 0;
@@ -140,6 +156,67 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 display.setText("" + counter);
             }
         });
+    }
+
+    private String monthConverter(int month) {
+        String str = "";
+
+        switch(month){
+            case 1:
+                str = "January";
+                break;
+            case 2:
+                str = "February";
+                break;
+            case 3:
+                str = "March";
+                break;
+            case 4:
+                str = "April";
+                break;
+            case 5:
+                str = "May";
+                break;
+            case 6:
+                str = "June";
+                break;
+            case 7:
+                str = "July";
+                break;
+            case 8:
+                str = "August";
+                break;
+            case 9:
+                str = "September";
+                break;
+            case 10:
+                str = "October";
+                break;
+            case 11:
+                str = "November";
+                break;
+            case 12:
+                str = "December";
+                break;
+            default:
+                str = "[month]";
+                break;
+        }
+
+        return str;
+    }
+
+    private int getIndex(Spinner spinner, String myString)
+    {
+        int index = 0;
+
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     public void submitAddHoursRecurring(View view) {

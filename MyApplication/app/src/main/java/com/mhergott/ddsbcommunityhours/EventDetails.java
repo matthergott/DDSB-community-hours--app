@@ -12,10 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +32,8 @@ public class EventDetails extends ActionBarActivity {
     boolean recurring = false;
     LinearLayout linearListView;
     VolunteerEvent v;
+    static final String STATE_EVENT = "passedEvent";
+    static final String STATE_POSITION = "passedPosition";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +46,13 @@ public class EventDetails extends ActionBarActivity {
         actionBar.setTitle("Event Details");
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle == null) {
-            bundle = savedInstanceState;
+        if (savedInstanceState != null) { // if there was no bundle passed to the activity, use the saved state
+            // Restore value of members from saved state
+            nameTxt = savedInstanceState.getString(STATE_EVENT);
+            position = savedInstanceState.getInt(STATE_POSITION);
         }
-        else{
+        if(bundle!=null){
+            // Use values passed to activity in a bundle
             nameTxt = bundle.getString("event_name");
             position = bundle.getInt("tab");
         }
@@ -131,6 +133,15 @@ public class EventDetails extends ActionBarActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the event and position passed into the activity
+        savedInstanceState.putString(STATE_EVENT, nameTxt);
+        savedInstanceState.putInt(STATE_POSITION, position);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu only if it is recurring
         if(recurring)
@@ -141,13 +152,15 @@ public class EventDetails extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
-            case android.R.id.home: //this case was present when the activity was created
-                NavUtils.navigateUpFromSameTask(this);
+            case android.R.id.home: //for up navigation
+                Intent i = new Intent(this,MainActivity.class);
+                i.putExtra("position_value",position);
+                startActivity(i);
                 return true;
             case R.id.menu_event_details_add_hours:
-                Intent intent = new Intent(this,AddHoursRecurringEvent.class);
-                intent.putExtra("event_details",event);
-                startActivity(intent);
+                Intent j = new Intent(this,AddHoursRecurringEvent.class);
+                j.putExtra("event_details",event);
+                startActivity(j);
                 return true;
             default:
                 super.onOptionsItemSelected(item);
