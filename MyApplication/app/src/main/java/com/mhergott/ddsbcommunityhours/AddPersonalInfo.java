@@ -184,20 +184,12 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
                 fos.close();
             } catch (Exception e) {}
 
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor prefEditor = sharedPref.edit();
-            prefEditor.putString("com.mhergott.ddsbcommunityhours.name", name);
-            prefEditor.putString("com.mhergott.ddsbcommunityhours.school", schoolSelected);
-            prefEditor.putString("com.mhergott.ddsbcommunityhours.day", daySelected);
-            prefEditor.putString("com.mhergott.ddsbcommunityhours.month", monthSelected);
-            prefEditor.putString("com.mhergott.ddsbcommunityhours.year", yearSelected);
-            prefEditor.commit();
-
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
         else{
-            return;
+            Toast.makeText(AddPersonalInfo.this, "Please update all red fields",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

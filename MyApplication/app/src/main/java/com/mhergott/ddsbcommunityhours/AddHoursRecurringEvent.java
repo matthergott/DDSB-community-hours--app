@@ -2,6 +2,8 @@ package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,8 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -43,6 +47,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add Hours");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle == null) {
@@ -116,36 +121,68 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 display.setText("" + counter);
             }
         });
+        add.setOnLongClickListener(new View.OnLongClickListener() { //needs work!
+            @Override
+            public boolean onLongClick(View v) {
+                counter++;
+                display.setText("" + counter);
+                return false;
+            }
+        });
         sub.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 counter--;
+                if(counter < 0){
+                    counter++;
+                    return;
+                }
                 display.setText("" + counter);
             }
         });
     }
 
-    public void submitAddHoursRecurring(View view){
+    public void submitAddHoursRecurring(View view) {
         daySelected = day.getSelectedItem().toString();
         monthSelected = month.getSelectedItem().toString();
         yearSelected = year.getSelectedItem().toString();
 
-        String toFile = daySelected + " " + monthSelected + " " + yearSelected + ";" + counter + ";";
+        boolean isError = false;
+        if (counter<=0) {
+            isError = true;
+            display.setBackgroundColor(Color.RED);
+        }
+        if (daySelected == null || daySelected.equals("[day]")) {
+            isError = true;
+            day.setBackgroundColor(Color.RED);
+        }
+        if (monthSelected == null || monthSelected.equals("[month]")) {
+            isError = true;
+            month.setBackgroundColor(Color.RED);
+        }
+        if (yearSelected == null || yearSelected.equals("[year]")) {
+            isError = true;
+            year.setBackgroundColor(Color.RED);
+        }
 
-        Log.i("MyActivity", v.getName());
-        Log.i("MyActivity", toFile);
-
-        try {
-            FileOutputStream fos = openFileOutput(v.getName()+".txt", Context.MODE_PRIVATE);
-            fos.write(v.addHours(toFile).getBytes());
-            fos.close();
-        } catch (Exception e) {}
-
-        Intent intent = new Intent(this,EventDetails.class);
-        intent.putExtra("event_name",v.getName());
-        intent.putExtra("tab",0);
-        startActivity(intent);
-        finish();
+        if (!isError) {
+            String toFile = daySelected + " " + monthSelected + " " + yearSelected + ";" + counter + ";";
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.addHours(toFile).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+            Intent intent = new Intent(this, EventDetails.class);
+            intent.putExtra("event_name", v.getName());
+            intent.putExtra("tab", 0);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            Toast.makeText(AddHoursRecurringEvent.this, "Please update all red fields",
+                        Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -157,13 +194,15 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == android.R.id.home) {
+            // for up navigation
+            Intent intent = new Intent(this,EventDetails.class);
+            intent.putExtra("event_name",v.getName());
+            intent.putExtra("tab",0);
+            startActivity(intent);
             return true;
         }
 
@@ -172,11 +211,10 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+        //required empty method
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        //required empty method
     }
 }
