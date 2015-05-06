@@ -25,7 +25,7 @@
                 android:value="com.mhergott.ddsbcommunityhours.MainActivity" />
         </activity>
         <activity
-            android:name=".getSingleActivityInfo"
+            android:name=".GetSingleActivityInfo"
             android:label="@string/title_activity_get_single_activity_info"
             android:parentActivityName=".MainActivity" >
             <meta-data

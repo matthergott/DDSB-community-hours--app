@@ -68,26 +68,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             finish();
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        try {
-            FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_PRIVATE);
-            fos.write("Swimming;Timekeeping;".getBytes());
-            fos.close();
-        } catch (Exception e) {}
-        try {
-            FileOutputStream fos = openFileOutput("Swimming.txt", Context.MODE_PRIVATE);
-            fos.write("Swimming;frolicking in the water;City of Pickering;17;".getBytes());
-            fos.close();
-        } catch (Exception e) {}
-        try {
-            FileOutputStream fos = openFileOutput("Timekeeping.txt", Context.MODE_PRIVATE);
-            fos.write("Timekeeping;pushing buttons watching hockey;PHA;200;".getBytes());
-            fos.close();
-        } catch (Exception e) {}
-        */
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Volunteer Hours");
         actionBar.addTab(actionBar.newTab().setText("In Progress").setTabListener(this));
@@ -220,7 +200,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
                 selectEventType();
                 return true;
             case R.id.main_view_personal_info:
-                viewPersonalInfo(personalInformation);
+                viewPersonalInfo();
                 return true;
             default:
                 super.onOptionsItemSelected(item);
@@ -228,7 +208,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         return true;
     }
 
-    public void arrCreator(String str, boolean x)
+    private void arrCreator(String str, boolean x)
     {
         if(x) {
             if (str.indexOf(';') == -1)
@@ -287,14 +267,9 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         DialogFragment newFragment = new SelectLogTypeDialog();
         newFragment.show(getSupportFragmentManager(), "newLog");
     }
-    public void viewPersonalInfo(String str){
-        DialogFragment f = new ViewPersonalInfoDialog();
-        // Supply str input as an argument.
-        f.show(getSupportFragmentManager(), "personalInfo");
-    }
     @Override
     public void onDialogSingleClick(DialogFragment dialog) {
-        Intent intent = new Intent(this,getSingleActivityInfo.class);
+        Intent intent = new Intent(this,GetSingleActivityInfo.class);
         startActivity(intent);
     }
     @Override
@@ -311,12 +286,15 @@ public class MainActivity extends ActionBarActivity implements android.support.v
         startActivity(intent);
     }
 
+    public void viewPersonalInfo(){
+        DialogFragment f = new ViewPersonalInfoDialog();
+        f.show(getSupportFragmentManager(), "personalInfo");
+    }
     @Override
     public void onDialogEditInfo(DialogFragment dialog) {
         Intent intent = new Intent(this,AddPersonalInfo.class);
         startActivity(intent);
     }
-
     @Override
     public void onDialogCancel(DialogFragment dialog) {
         return;

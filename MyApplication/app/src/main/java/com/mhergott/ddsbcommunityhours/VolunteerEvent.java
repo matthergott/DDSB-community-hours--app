@@ -95,17 +95,12 @@ public class VolunteerEvent extends ActionBarActivity {
     public String getHours(){
         return hours;
     }
-    public String addHours(String string){
-        Log.i("MyActivity", string);
-        Log.i("MyActivity", name);
+    public String addHours(String string){ //recreate the entire string of the volunteer event to be resaved
         hoursList.add(string.toString());
         string = string.substring(string.indexOf(';') + 1);
         int temp = Integer.valueOf(hours);
         temp += Integer.valueOf(string.substring(0,string.indexOf(';')));
         hours = String.valueOf(temp);
-
-        Log.i("MyActivity", hours);
-        Log.i("MyActivity", hoursList.get(0));
 
         String toFile = name + ";" +  description + ";" + organisation + ";" + hours + ";";
         if(hoursList!=null){
@@ -113,16 +108,23 @@ public class VolunteerEvent extends ActionBarActivity {
                 toFile = toFile + hoursList.get(a).toString();
             }
         }
-        String fileName = name + ".txt";
-        Log.i("MyActivity", fileName);
-        Log.i("MyActivity", toFile);
-        /*
-            try {
-            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
-            fos.write(toFile.getBytes());
-            fos.close();
-        } catch (Exception e) {}
-        */
+
+        return toFile;
+    }
+    public String removeHours(String string){ //recreate the entire string of the volunteer event to be resaved
+        hoursList.remove(string.toString());
+        string = string.substring(string.indexOf(';') + 1);
+        int temp = Integer.valueOf(hours);
+        temp -= Integer.valueOf(string.substring(0,string.indexOf(';')));
+        hours = String.valueOf(temp);
+
+        String toFile = name + ";" +  description + ";" + organisation + ";" + hours + ";";
+        if(hoursList!=null){
+            for (int a = 0; a < hoursList.size(); a++){
+                toFile = toFile + hoursList.get(a).toString();
+            }
+        }
+
         return toFile;
     }
     public ArrayList<String> getHoursList(){

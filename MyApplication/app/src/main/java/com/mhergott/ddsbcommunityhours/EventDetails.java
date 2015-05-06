@@ -2,8 +2,9 @@ package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.v4.app.NavUtils;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,19 +16,22 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class EventDetails extends ActionBarActivity {
+public class EventDetails extends ActionBarActivity implements RecurringEventInstanceDialog.NoticeDialogListener, ConfirmDeleteDialog.NoticeDialogListener {
 
     String nameTxt;
     String event;
     int position;
+    List<String> namesList = new ArrayList<String>();
     ArrayList<String> hoursList;
     boolean recurring = false;
     LinearLayout linearListView;
@@ -71,10 +75,6 @@ public class EventDetails extends ActionBarActivity {
 
         v = new VolunteerEvent(event,position);
 
-        //Log.i("MyActivity", nameTxt);
-        Log.i("MyActivity", event);
-        //Log.i("MyActivity", v.getName());
-
         TextView name = (TextView) findViewById(R.id.nameTextEventDetails);
         name.setText(v.getName().toString());
         TextView description = (TextView) findViewById(R.id.descriptionTextEventDetails);
@@ -88,12 +88,11 @@ public class EventDetails extends ActionBarActivity {
             hoursList = v.getHoursList();
             recurring = true;
             TextView eventDatesAndHoursText = (TextView) findViewById(R.id.eventDatesAndHoursText);
-            eventDatesAndHoursText.setVisibility(View.VISIBLE);//
+            if(v.getHoursList().size()>0)
+                eventDatesAndHoursText.setVisibility(View.VISIBLE);
 
             for (int i = 0; i < hoursList.size(); i++) {
-                /**
-                 * inflate items/ add items in linear layout instead of listview
-                 */
+                //inflate items/ add items in linear layout instead of listview
                 LayoutInflater inflater = null;
                 inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View mLinearView = inflater.inflate(R.layout.recurring_hours_row, null);
@@ -103,12 +102,10 @@ public class EventDetails extends ActionBarActivity {
                 mLinearView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                 ((LinearLayout) linearListView).addView((RelativeLayout) mLinearView);
 
-                /**
-                 * set item into row
-                 */
-
+                //set item into row
                 Log.i("MyActivity", hoursList.get(i));
                 String str = hoursList.get(i);
+                final String toBeDeleted = str;
                 final String dateText = str.substring(0, str.indexOf(';'));
                 str = str.substring(str.indexOf(';') + 1);
                 final String hoursText = str.substring(0, str.indexOf(';'));
@@ -120,12 +117,9 @@ public class EventDetails extends ActionBarActivity {
 
                 //get item row on click
                 mLinearView.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
-                        Toast.makeText(EventDetails.this, "Clicked item;" + dateText,
-                                Toast.LENGTH_SHORT).show();
+                        ViewRecurringEventInstance(dateText, hoursText, toBeDeleted);
                     }
                 });
             }
@@ -145,7 +139,9 @@ public class EventDetails extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu only if it is recurring
         if(recurring)
-            getMenuInflater().inflate(R.menu.menu_event_details, menu);
+            getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
+        else
+            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
         return true;
     }
 
@@ -162,9 +158,109 @@ public class EventDetails extends ActionBarActivity {
                 j.putExtra("event_details",event);
                 startActivity(j);
                 return true;
+            case R.id.menu_event_details_delete:
+                confirmDelete();
+                return true;
             default:
                 super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    public void ViewRecurringEventInstance(String date, String hours, String toDelete){
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("recurring_event_instance_date", date);
+        editor.putString("recurring_event_instance_hours", hours);
+        editor.putString("recurring_event_instance_toDelete", toDelete);
+        editor.commit();
+
+        DialogFragment f = new RecurringEventInstanceDialog();
+        f.show(getSupportFragmentManager(), "recurringEventInstance");
+    }
+    @Override
+    public void onDialogDelete(DialogFragment dialog) {
+        confirmDelete();
+        return;
+    }
+    @Override
+    public void onDialogCancel(DialogFragment dialog) {
+        return;
+    }
+
+    public void confirmDelete(){
+        DialogFragment g = new ConfirmDeleteDialog();
+        g.show(getSupportFragmentManager(), "confirmDelete");
+    }
+    @Override
+    public void onDialogDeleteConfirm(DialogFragment dialog) {
+        if(recurring) {
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            String toDelete = sharedPref.getString("recurring_event_instance_toDelete", "");
+
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.removeHours(toDelete).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+
+            finish();
+            Intent intent = new Intent(this, EventDetails.class);
+            intent.putExtra("event_name", v.getName());
+            intent.putExtra("tab", 0);
+            startActivity(intent);
+        }
+        else {
+            FileInputStream fis;
+            String currentNames = "";
+            try {
+                fis = openFileInput("CompletedNames.txt");
+                byte[] input = new byte[fis.available()];
+                while (fis.read(input) != -1) {
+                }
+                currentNames = new String(input, "UTF-8");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            listCreator(currentNames);
+
+            //remove the event from the list, make the list a string again, then resave the list string
+            namesList.remove(v.getName());
+            String toFile = "";
+            for (int a = 0; a < namesList.size(); a++) {
+                toFile = toFile + namesList.get(a) + ";";
+            }
+
+            if (toFile.equals("")) {
+                deleteFile("CompletedNames.txt");
+            }
+            else {
+                try {
+                    FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_PRIVATE);
+                    fos.write(toFile.getBytes());
+                    fos.close();
+                } catch (Exception e) {
+                }
+            }
+
+            Intent intent = new Intent(this,MainActivity.class);
+            intent.putExtra("position_value",1);
+            startActivity(intent);
+            finish();
+        }
+    }
+    @Override
+    public void onDialogCancelConfirm(DialogFragment dialog) {
+        return;
+    }
+
+    private void listCreator(String str){
+        while(str.indexOf(';')!=-1){
+            namesList.add(str.substring(0, str.indexOf(';')));
+            str = str.substring(str.indexOf(';') + 1);
+        }
     }
 }

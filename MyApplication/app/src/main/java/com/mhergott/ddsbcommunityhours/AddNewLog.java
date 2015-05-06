@@ -92,7 +92,7 @@ public class AddNewLog extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     public void goToSingleActivity(View view){
-        Intent intent = new Intent(this,getSingleActivityInfo.class);
+        Intent intent = new Intent(this,GetSingleActivityInfo.class);
         startActivity(intent);
     }
     public void goToRecurringActivity(View view){

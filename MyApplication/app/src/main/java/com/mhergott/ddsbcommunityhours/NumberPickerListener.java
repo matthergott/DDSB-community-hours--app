@@ -6,9 +6,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
-/**
- * Created by Matt on 28/04/2015.
- */
 public class NumberPickerListener implements View.OnTouchListener {
 
     private Handler handler = new Handler();

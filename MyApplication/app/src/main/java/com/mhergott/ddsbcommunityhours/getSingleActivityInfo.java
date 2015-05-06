@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import java.io.FileOutputStream;
 
 
-public class getSingleActivityInfo extends ActionBarActivity {
+public class GetSingleActivityInfo extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

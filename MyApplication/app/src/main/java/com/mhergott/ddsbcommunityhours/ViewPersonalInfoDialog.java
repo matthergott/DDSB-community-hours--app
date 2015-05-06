@@ -77,11 +77,13 @@ public class ViewPersonalInfoDialog extends DialogFragment {
         builder.setMessage("Personal Information")
                 .setPositiveButton("Edit Information", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogEditInfo(ViewPersonalInfoDialog.this);                    }
+                        mListener.onDialogEditInfo(ViewPersonalInfoDialog.this);
+                    }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogCancel(ViewPersonalInfoDialog.this);                      }
+                        mListener.onDialogCancel(ViewPersonalInfoDialog.this);
+                    }
                 });
 
         builder.setView(view);

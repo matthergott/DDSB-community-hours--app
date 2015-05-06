@@ -149,35 +149,6 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 display.setText("" + counter);
             }
         }));
-
-        /*
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                counter++;
-                display.setText("" + counter);
-            }
-        });
-        add.setOnLongClickListener(new View.OnLongClickListener() { //needs work!
-            @Override
-            public boolean onLongClick(View v) {
-                counter++;
-                display.setText("" + counter);
-                return false;
-            }
-        });
-        sub.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                counter--;
-                if(counter < 0){
-                    counter++;
-                    return;
-                }
-                display.setText("" + counter);
-            }
-        });
-        */
     }
 
     private String monthConverter(int month) {
