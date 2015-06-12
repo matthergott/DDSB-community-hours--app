@@ -2,7 +2,12 @@ package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -25,8 +30,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class AddHoursRecurringEvent extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class AddHoursRecurringEvent extends ActionBarActivity implements AdapterView.OnItemSelectedListener, ConfirmAddCandidShotDialog.NoticeDialogListener {
 
+    private static final int CANDID_CAMERA_REQUEST = 22221;
+    private static final int CANDID_RESULT_LOAD_IMAGE = 12222;
     private Spinner day;
     private Spinner month;
     private Spinner year;
@@ -40,6 +47,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     private Button submit;
     String event;
     VolunteerEvent v;
+    private Bitmap candidPhoto;
+    private String selectedCandidImagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,17 +252,24 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 fos.close();
             } catch (Exception e) {
             }
-            Intent intent = new Intent(this, EventDetails.class);
-            intent.putExtra("event_name", v.getName());
-            intent.putExtra("tab", 0);
-            startActivity(intent);
-            finish();
+            submitEvent(view);
         }
         else{
             Toast.makeText(AddHoursRecurringEvent.this, "Please update all red fields",
                         Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void submitEvent(View view) {
+        requestCandidPhoto();
+    }
+
+    private void requestCandidPhoto() {
+        DialogFragment g = new ConfirmAddCandidShotDialog();
+        g.show(getSupportFragmentManager(), "confirmAddCandidShot");
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -286,5 +302,102 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         //required empty method
+    }
+
+    @Override
+    public void onCandidDialogCapture(DialogFragment dialog) {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CANDID_CAMERA_REQUEST);
+    }
+
+    @Override
+    public void onCandidDialogSelect(DialogFragment dialog) {
+        Intent i = new Intent(
+                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(i, CANDID_RESULT_LOAD_IMAGE);
+    }
+
+    @Override
+    public void onCandidDialogLater(DialogFragment dialog) {
+        addPhotoNameToFile("photo has not been added;");
+
+        returnToMainActivity();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CANDID_CAMERA_REQUEST && resultCode == RESULT_OK) {
+            candidPhoto = (Bitmap) data.getExtras().get("data");
+
+            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
+
+            addPhotoNameToFile(v.getName() + "candid.jpeg;");
+
+            //toastImage(candidPhoto);
+
+            //requestSignaturePhoto();
+            returnToMainActivity();
+        }
+        else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            selectedCandidImagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            try {
+                candidPhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
+
+            addPhotoNameToFile(v.getName() + "candid.jpeg;");
+
+            //requestSignaturePhoto();
+            returnToMainActivity();
+            //toastImage(candidPhoto);
+        }
+        else{
+            //save string to file saying there is no photo yet
+            addPhotoNameToFile("photo has not been added;");
+            returnToMainActivity();
+            //requestSignaturePhoto();
+        }
+    }
+
+    private void saveImageToInternalStorage(Bitmap bitmap, String suffix) {
+        try{
+            FileOutputStream fos = openFileOutput(v.getName() + suffix, MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void addPhotoNameToFile(String s) {
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+                fos.write((s).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+    }
+
+    private void returnToMainActivity() {
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("position_value",0);
+        startActivity(intent);
+        finish();
     }
 }

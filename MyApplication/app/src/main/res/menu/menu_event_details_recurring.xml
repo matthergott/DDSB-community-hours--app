@@ -8,5 +8,9 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="Add Hours"
         app:showAsAction="ifRoom"></item>
-
+    <item
+        android:id="@+id/menu_event_details_submit_recurring"
+        android:icon="@android:drawable/ic_dialog_email"
+        android:title="Submit event"
+        app:showAsAction="ifRoom"></item>
 </menu>

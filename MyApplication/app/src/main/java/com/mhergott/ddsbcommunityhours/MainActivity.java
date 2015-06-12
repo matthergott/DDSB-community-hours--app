@@ -202,10 +202,34 @@ public class MainActivity extends ActionBarActivity implements android.support.v
             case R.id.main_view_personal_info:
                 viewPersonalInfo();
                 return true;
+            case R.id.main_email:
+                sendEmail();
+                return true;
+            case R.id.main_cap_pic:
+                captureImage();
+                return true;
+            case R.id.main_choose_pic:
+                chooseImage();
+                return true;
             default:
                 super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void sendEmail() {
+        Intent intent = new Intent(this,EmailActivity.class);
+        startActivity(intent);
+    }
+
+    private void captureImage() {
+        Intent intent = new Intent(this,CapturePhoto.class);
+        startActivity(intent);
+    }
+
+    private void chooseImage(){
+        Intent intent = new Intent(this,SelectPhoto.class);
+        startActivity(intent);
     }
 
     private void arrCreator(String str, boolean x)

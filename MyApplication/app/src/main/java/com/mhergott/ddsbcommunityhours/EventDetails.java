@@ -3,7 +3,11 @@ package com.mhergott.ddsbcommunityhours;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,8 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EventDetails extends ActionBarActivity implements RecurringEventInstanceDialog.NoticeDialogListener, ConfirmDeleteDialog.NoticeDialogListener {
+public class EventDetails extends ActionBarActivity implements RecurringEventInstanceDialog.NoticeDialogListener, ConfirmDeleteDialog.NoticeDialogListener , SubmitDialog.NoticeDialogListener {
 
+    private static final int SUBMIT_RESULT_LOAD_IMAGE = 54545;
+    private static final int SUBMIT_CAMERA_REQUEST = 10000;
     String nameTxt;
     String event;
     int position;
@@ -38,6 +45,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     VolunteerEvent v;
     static final String STATE_EVENT = "passedEvent";
     static final String STATE_POSITION = "passedPosition";
+    private Bitmap signaturePhoto;
+    private String selectedSignatureImagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +101,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 eventDatesAndHoursText.setVisibility(View.VISIBLE);
 
             for (int i = 0; i < hoursList.size(); i++) {
-                //inflate items/ add items in linear layout instead of listview
+                //inflate items add items in linear layout instead of listview
                 LayoutInflater inflater = null;
                 inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View mLinearView = inflater.inflate(R.layout.recurring_hours_row, null);
@@ -103,11 +112,13 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 ((LinearLayout) linearListView).addView((RelativeLayout) mLinearView);
 
                 //set item into row
-                Log.i("MyActivity", hoursList.get(i));
                 String str = hoursList.get(i);
                 final String toBeDeleted = str;
                 final String dateText = str.substring(0, str.indexOf(';'));
                 str = str.substring(str.indexOf(';') + 1);
+                if(str.indexOf(';')==-1){
+                    return;
+                }
                 final String hoursText = str.substring(0, str.indexOf(';'));
 
                 dateView.setText(dateText);
@@ -124,6 +135,18 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 });
             }
         }
+
+        LinearLayout candidPhotoLinearLayout = (LinearLayout) findViewById(R.id.candidPhotoLinearLayout);
+        candidPhotoLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                candidPhotoClick();
+            }
+        });
+    }
+
+    private void candidPhotoClick() {
+        Toast.makeText(getApplicationContext(), "roasty toasty", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -161,10 +184,21 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             case R.id.menu_event_details_delete:
                 confirmDelete();
                 return true;
+            case R.id.menu_event_details_submit_single:
+                submit();
+                return true;
+            case R.id.menu_event_details_submit_recurring:
+                submit();
+                return true;
             default:
                 super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void submit() {
+        DialogFragment f = new SubmitDialog();
+        f.show(getSupportFragmentManager(), "submit");
     }
 
     public void ViewRecurringEventInstance(String date, String hours, String toDelete){
@@ -263,4 +297,98 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             str = str.substring(str.indexOf(';') + 1);
         }
     }
+
+    @Override
+    public void onSubmitDialogCapture(DialogFragment dialog) {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, SUBMIT_CAMERA_REQUEST);
+    }
+
+    @Override
+    public void onSubmitDialogSelect(DialogFragment dialog) {
+        Intent i = new Intent(
+                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(i, SUBMIT_RESULT_LOAD_IMAGE);
+    }
+    @Override
+    public void onSubmitDialogCancel(DialogFragment dialog){
+        Toast.makeText(getApplicationContext(), "No photo was selected, try again", Toast.LENGTH_LONG).show();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SUBMIT_CAMERA_REQUEST && resultCode == RESULT_OK) {
+            signaturePhoto = (Bitmap) data.getExtras().get("data");
+
+            saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
+
+            addPhotoNameToFile(v.getName() + "signature.jpeg;");
+
+            //toastImage(candidPhoto);
+
+            //requestSignaturePhoto();
+            toEmailActivity();
+            finish();
+        }
+        else if (requestCode == SUBMIT_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            selectedSignatureImagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            try {
+                signaturePhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
+
+            addPhotoNameToFile(v.getName() + "signature.jpeg;");
+
+            //requestSignaturePhoto();
+            toEmailActivity();
+            finish();
+            //toastImage(candidPhoto);
+        }
+        else{
+            Toast.makeText(this, "No photo was selected, try again", Toast.LENGTH_LONG).show();
+        }
+    }
+    private void toEmailActivity() {
+        Intent intent = new Intent(this,EmailActivity.class);
+        intent.putExtra("name", v.getName());
+        intent.putExtra("description", v.getDescription());
+        intent.putExtra("organisation", v.getOrganisation());
+        intent.putExtra("hours", v.getHours());
+        intent.putExtra("signature", v.getName()+"signature.jpeg");
+        startActivity(intent);
+        finish();
+    }
+    private void saveImageToInternalStorage(Bitmap bitmap, String suffix) {
+        try{
+            FileOutputStream fos = openFileOutput(v.getName() + suffix, MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void addPhotoNameToFile(String s) {
+        try {
+            FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+            fos.write((s).getBytes());
+            fos.close();
+        } catch (Exception e) {
+        }
+    }
+
 }

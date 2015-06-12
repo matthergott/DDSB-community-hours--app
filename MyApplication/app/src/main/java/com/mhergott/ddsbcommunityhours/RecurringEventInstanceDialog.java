@@ -50,7 +50,7 @@ public class RecurringEventInstanceDialog extends DialogFragment {
         TextView hoursView = (TextView) view.findViewById(R.id.recurringEventInstanceDialogHoursText);
         hoursView.setText(hours.toString());
 
-        builder.setMessage("Personal Information")
+        builder.setMessage("Event Instance Info")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogDelete(RecurringEventInstanceDialog.this);

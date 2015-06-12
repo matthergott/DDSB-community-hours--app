@@ -85,7 +85,51 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="0dp"
             android:layout_marginRight="0dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="30dp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/dividingLine1eventDetails" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/candidPhotoLinearLayout">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:text="Candid Photo Present:"
+                android:id="@+id/candidPhotoPresent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="22sp"
+                android:id="@+id/candidPhotoCheckBox"
+                android:adjustViewBounds="true"
+                android:src="@android:drawable/checkbox_on_background"
+                android:layout_marginRight="20dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/dividingLine2eventDetails"/>
 
         <TextView
             android:layout_width="wrap_content"

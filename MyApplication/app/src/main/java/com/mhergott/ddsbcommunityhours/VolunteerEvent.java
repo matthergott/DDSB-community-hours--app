@@ -60,8 +60,9 @@ public class VolunteerEvent extends ActionBarActivity {
                 str = str.substring(str.indexOf(';')+1);
                 toAdd = toAdd + str.substring(0, str.indexOf(';')+1);
                 str = str.substring(str.indexOf(';') + 1);
-                //day month year;hours;
-                Log.i("MyActivity", toAdd);
+                toAdd = toAdd + str.substring(0, str.indexOf(';')+1);
+                str = str.substring(str.indexOf(';') + 1);
+                //day month year;hours;photo file name;
                 hoursList.add(toAdd);
             }
         }
