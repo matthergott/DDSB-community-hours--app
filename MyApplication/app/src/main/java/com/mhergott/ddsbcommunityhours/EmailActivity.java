@@ -6,10 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -29,16 +31,17 @@ import java.util.Random;
 public class EmailActivity extends ActionBarActivity {
 
     private static final int EMAIL_REQUEST = 44444;
-    String name;
-    String description;
-    String organisation;
-    String hours;
+    private String name;
+    private String description;
+    private String organisation;
+    private String hours;
     private String personalInformation;
     private String userDOB;
     private String userName;
     private String userSchool;
     private String signatureFileName;
     private Bitmap signaturePic;
+    private File signatureImageFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +57,9 @@ public class EmailActivity extends ActionBarActivity {
         signatureFileName = bundle.getString("signature");
 
         //get signature photo bitmap from internal storage
-        File file = getBaseContext().getFileStreamPath(signatureFileName);
+        signatureImageFile = getBaseContext().getFileStreamPath(signatureFileName);
         try {
-            signaturePic = BitmapFactory.decodeStream(new FileInputStream(file));
+            signaturePic = BitmapFactory.decodeStream(new FileInputStream(signatureImageFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -147,8 +150,9 @@ public class EmailActivity extends ActionBarActivity {
         canvas.drawText(organisation,615,300,paint);
         canvas.drawText(hours,1330,340,paint);
 
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(signaturePic, 100, 100, false);
-        canvas.drawBitmap(resizedBitmap, 100, 100, paint);
+        Bitmap resizedSignatureBitmap = Bitmap.createScaledBitmap(signaturePic, 100, 100, false);
+        canvas.drawBitmap(resizedSignatureBitmap, 428, 281, paint);
+
         /*
         //If the text is bigger than the canvas , reduce the font size
         if(textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text

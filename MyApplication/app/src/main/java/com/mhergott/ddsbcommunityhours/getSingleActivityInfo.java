@@ -340,7 +340,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
             e.printStackTrace();
         }
     }
-// breifly show image for confirmation
+// briefly show image for confirmation
     private void toastImage(Bitmap image){
         Toast toast = new Toast(this);
         ImageView view = new ImageView(this);
