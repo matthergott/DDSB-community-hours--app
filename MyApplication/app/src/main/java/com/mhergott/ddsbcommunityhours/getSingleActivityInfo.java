@@ -50,7 +50,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         final EditText hours = (EditText) findViewById(R.id.hours_single);
         Button submit = (Button) findViewById(R.id.submit_single);
 
-
+// check for correct user input
         submit.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
@@ -159,15 +159,6 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
         return super.onOptionsItemSelected(item);
     }
-
-    /*
-    public void submitEvent(View view){
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.putExtra("position_value",1);
-        startActivity(intent);
-        finish();
-    }
-    */
 
     public void submitEvent(View view){
         requestCandidPhoto();
@@ -349,7 +340,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
             e.printStackTrace();
         }
     }
-
+// breifly show image for confirmation
     private void toastImage(Bitmap image){
         Toast toast = new Toast(this);
         ImageView view = new ImageView(this);
