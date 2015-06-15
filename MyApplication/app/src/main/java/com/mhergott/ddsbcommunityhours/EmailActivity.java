@@ -119,7 +119,7 @@ public class EmailActivity extends ActionBarActivity {
             finish();
         }
     }
-
+// method to overlay information from user on to volunteer hours form
     private Bitmap writeTextOnDrawable(int drawableId, String text, Context mContext) {
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId)
@@ -173,7 +173,7 @@ public class EmailActivity extends ActionBarActivity {
         final float conversionScale = context.getResources().getDisplayMetrics().density;
         return (int) ((nDP * conversionScale) + 0.5f) ;
     }
-
+// same the image for later reference
     public boolean saveImageToInternalStorage(Bitmap image) {
         try {
             // Use the compress method on the Bitmap object to write image to
