@@ -1,10 +1,8 @@
 package com.mhergott.ddsbcommunityhours;
 
-
 import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,8 +26,8 @@ public class VolunteerEvent extends ActionBarActivity {
     private String hours;
     private boolean recurring;
     ArrayList<String> hoursList = new ArrayList<>();
-    //pictures??
-
+ 
+// initialize activity based on internal data
     public VolunteerEvent(String str) {
         name = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
