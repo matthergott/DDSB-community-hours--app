@@ -83,7 +83,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         }
 
         v = new VolunteerEvent(event,position);
-
+// set up text fields
         TextView name = (TextView) findViewById(R.id.nameTextEventDetails);
         name.setText(v.getName().toString());
         TextView description = (TextView) findViewById(R.id.descriptionTextEventDetails);
@@ -195,7 +195,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         }
         return true;
     }
-
+// open up dialog to enable user to submit
     private void submit() {
         DialogFragment f = new SubmitDialog();
         f.show(getSupportFragmentManager(), "submit");
@@ -363,6 +363,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             Toast.makeText(this, "No photo was selected, try again", Toast.LENGTH_LONG).show();
         }
     }
+// send info to another activity for it to be emailed
     private void toEmailActivity() {
         Intent intent = new Intent(this,EmailActivity.class);
         intent.putExtra("name", v.getName());
