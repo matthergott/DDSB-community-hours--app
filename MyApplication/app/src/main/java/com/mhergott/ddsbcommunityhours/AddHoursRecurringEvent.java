@@ -55,10 +55,12 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_hours_recurring_event);
 
+        //edit the action bar to change title and add 'back' button
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add Hours");
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        //receive the information from the bundle
         Bundle bundle = getIntent().getExtras();
         if (bundle == null) {
             bundle = savedInstanceState;
@@ -130,7 +132,6 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
         day.setSelection(getIndex(day, String.valueOf(currentDay))); //set spinners to current date
         month.setSelection(getIndex(month, monthConverter(currentMonth)));
-        //month.setSelection(getIndex(month, "April"));
         year.setSelection(getIndex(year, String.valueOf(currentYear)));
 
         //code for number picker
@@ -140,6 +141,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
         display = (TextView) findViewById(R.id.numPickerDisplay);
         display.setText("" + counter);
 
+        //when plus button is clicked, add 1 to counter
+        //when minus button is clicked, subtract one, make sure no negative hours
         add.setOnTouchListener(new NumberPickerListener(400, 100, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,8 +164,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     private String monthConverter(int month) {
+        //converts the month of the year to text
         String str = "";
-
         switch(month){
             case 1:
                 str = "January";
@@ -204,14 +207,12 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 str = "[month]";
                 break;
         }
-
         return str;
     }
 
-    private int getIndex(Spinner spinner, String myString)
+    private int getIndex(Spinner spinner, String myString) //used for setting values to spinners
     {
         int index = 0;
-
         for (int i=0;i<spinner.getCount();i++){
             if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
                 index = i;
@@ -222,10 +223,12 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     public void submitAddHoursRecurring(View view) {
+        //must be public as it is set as the onClick method for the button in XML
         daySelected = day.getSelectedItem().toString();
         monthSelected = month.getSelectedItem().toString();
         yearSelected = year.getSelectedItem().toString();
 
+        //checks for valid input, invalid set the field to red so they can reinput data
         boolean isError = false;
         if (counter<=0) {
             isError = true;
@@ -246,6 +249,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
         if (!isError) {
             String toFile = daySelected + " " + monthSelected + " " + yearSelected + ";" + counter + ";";
+            //write the details to the event file
             try {
                 FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
                 fos.write(v.addHours(toFile).getBytes());
@@ -261,7 +265,9 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     private void submitEvent(View view) {
-        requestCandidPhoto();
+        //requestCandidPhoto();
+        //must add in candid photo functionality still
+        returnToMainActivity();
     }
 
     private void requestCandidPhoto() {
@@ -305,13 +311,13 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     @Override
-    public void onCandidDialogCapture(DialogFragment dialog) {
+    public void onCandidDialogCapture(DialogFragment dialog) { //dialog selection
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CANDID_CAMERA_REQUEST);
     }
 
     @Override
-    public void onCandidDialogSelect(DialogFragment dialog) {
+    public void onCandidDialogSelect(DialogFragment dialog) { //dialog selection
         Intent i = new Intent(
                 Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
@@ -319,7 +325,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     @Override
-    public void onCandidDialogLater(DialogFragment dialog) {
+    public void onCandidDialogLater(DialogFragment dialog) { //dialog selection
         addPhotoNameToFile("photo has not been added;");
 
         returnToMainActivity();
@@ -327,9 +333,10 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //called when activity resumes after photo is captured or selected from the gallery
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CANDID_CAMERA_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == CANDID_CAMERA_REQUEST && resultCode == RESULT_OK) { //photo captured
             candidPhoto = (Bitmap) data.getExtras().get("data");
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
@@ -341,7 +348,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             //requestSignaturePhoto();
             returnToMainActivity();
         }
-        else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+        else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) { //photo selected from gallery
+            //get the data and then create the bitmap image
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 

@@ -24,20 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddNewLog"
-            android:label="@string/title_activity_add_new_log"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mhergott.ddsbcommunityhours.MainActivity" />
-        </activity>
-        <activity
             android:name=".GetSingleActivityInfo"
             android:label="@string/title_activity_get_single_activity_info"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mhergott.ddsbcommunityhours.AddNewLog" />
+                android:value="com.mhergott.ddsbcommunityhours.MainActivity" />
         </activity>
         <activity
             android:name=".AddPersonalInfo"

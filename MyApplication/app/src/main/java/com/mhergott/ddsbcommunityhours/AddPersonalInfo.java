@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 
 public class AddPersonalInfo extends ActionBarActivity implements AdapterView.OnItemSelectedListener,
@@ -46,12 +47,14 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_personal_info);
 
+        //create and rename the action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add Personal Info");
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
 
+        //code for creating the spinners
         schools = (Spinner) findViewById(R.id.schoolsSpinner);
         schools.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -110,8 +113,16 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {}
         });
-        ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this,
-                R.array.years, android.R.layout.simple_spinner_item);
+        //get the current year, then subract 13 to all kids' DOBs that could be in high school
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR); // get the current year
+
+        //create array for year using the current year value
+        String[] yearArray = new String[8];
+        yearArray[0] = "[year]";
+        for(int a = 1, yearCopy = (currentYear-13); a<8; a++, yearCopy--)
+            yearArray[a] = String.valueOf(yearCopy);
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, yearArray);
         adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         year.setAdapter(adapter3);
         year.setOnItemSelectedListener(this);
@@ -149,8 +160,9 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         }
     }
 
-    public void personalButtonClick(View view){
+    public void personalInfoButtonClick(View view){
 
+        //get the info from the fields
         EditText namePersonal = (EditText) findViewById(R.id.name_personal);
         String name = namePersonal.getText().toString();
         schoolSelected = schools.getSelectedItem().toString();
@@ -158,6 +170,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         monthSelected = month.getSelectedItem().toString();
         yearSelected = year.getSelectedItem().toString();
 
+        //if the inputted info is invalid, print an error
         boolean isError = false;
         if(name.equals("")){
             isError = true;
@@ -287,6 +300,9 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
 
     @Override
     public void onDialogNext6(DialogFragment dialog) {
-
+        returnToMainActivity();
+        Toast.makeText(getApplicationContext(), "Click the three dots up top to get started",
+                Toast.LENGTH_LONG).show();
+        finish();
     }
 }

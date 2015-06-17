@@ -79,6 +79,6 @@
         android:id="@+id/button_personal"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="personalButtonClick" />
+        android:onClick="personalInfoButtonClick" />
 
 </RelativeLayout>

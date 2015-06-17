@@ -11,19 +11,4 @@
         android:title="View Personal Info"
         android:orderInCategory="2"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/main_email"
-        android:title="Email"
-        android:orderInCategory="3"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/main_cap_pic"
-        android:title="Capture Photo"
-        android:orderInCategory="4"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/main_choose_pic"
-        android:title="Choose Photo"
-        android:orderInCategory="5"
-        app:showAsAction="never" />
 </menu>
