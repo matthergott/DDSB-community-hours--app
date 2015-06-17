@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,7 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class AddPersonalInfo extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class AddPersonalInfo extends ActionBarActivity implements AdapterView.OnItemSelectedListener,
+        TutorialDialog1.NoticeDialogListener, TutorialDialog2.NoticeDialogListener,
+        TutorialDialog3.NoticeDialogListener, TutorialDialog4.NoticeDialogListener,
+        TutorialDialog5.NoticeDialogListener, TutorialDialog6.NoticeDialogListener {
 
     String schoolSelected;
     String daySelected;
@@ -34,6 +38,8 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
     Spinner day;
     Spinner month;
     Spinner year;
+    private String personalInformation;
+    private String personalInformationCopy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +117,6 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         year.setOnItemSelectedListener(this);
 
         //////////////////////////////////////if entering page from "view info" dialog the following will execute
-        String personalInformation = null;
         FileInputStream fis2;
         try {
             fis2 = openFileInput("personalInfo.txt");
@@ -123,6 +128,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         } catch (IOException e) {
             e.printStackTrace();
         }
+        personalInformationCopy = personalInformation;
         if(personalInformation!=null){ //check if there is information already saved and treat the text file
             String nameTxt = personalInformation.substring(0, personalInformation.indexOf(";"));
             personalInformation = personalInformation.substring(personalInformation.indexOf(";")+1);
@@ -184,8 +190,12 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
                 fos.close();
             } catch (Exception e) {}
 
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+            if(personalInformationCopy == null){
+                launchTutorial();
+            }
+            else {
+                returnToMainActivity();
+            }
         }
         else{
             Toast.makeText(AddPersonalInfo.this, "Please update all red fields",
@@ -193,6 +203,10 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
         }
     }
 
+    private void returnToMainActivity() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -237,5 +251,42 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
             }
         }
         return index;
+    }
+
+    //Launch the series of tutorial dialogs if there was no information previously entered in system.
+    private void launchTutorial() {
+        DialogFragment frag = new TutorialDialog1();
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+    @Override
+    public void onDialogNext(DialogFragment dialog) {
+        DialogFragment frag = new TutorialDialog2();
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+    @Override
+    public void onDialogNext2(DialogFragment dialog) {
+        DialogFragment frag = new TutorialDialog3();
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+    @Override
+    public void onDialogNext3(DialogFragment dialog) {
+        DialogFragment frag = new TutorialDialog4();
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+    @Override
+    public void onDialogNext4(DialogFragment dialog) {
+        DialogFragment frag = new TutorialDialog5(); //keep designing the fifth one!!!!!
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+
+    @Override
+    public void onDialogNext5(DialogFragment dialog) {
+        DialogFragment frag = new TutorialDialog6(); //keep designing the fifth one!!!!!
+        frag.show(getSupportFragmentManager(), "confirmDelete");
+    }
+
+    @Override
+    public void onDialogNext6(DialogFragment dialog) {
+
     }
 }
