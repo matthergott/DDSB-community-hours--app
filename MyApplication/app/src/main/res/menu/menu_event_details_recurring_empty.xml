@@ -8,5 +8,5 @@
         android:id="@+id/menu_event_details_add_hours"
         android:icon="@android:drawable/ic_menu_add"
         android:title="Add Hours"
-        app:showAsAction="ifRoom"></item>
+        app:showAsAction="ifRoom"/>
 </menu>

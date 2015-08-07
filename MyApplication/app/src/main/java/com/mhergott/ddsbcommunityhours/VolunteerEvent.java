@@ -26,7 +26,7 @@ public class VolunteerEvent extends ActionBarActivity {
     private String organisation;
     private String hours;
     private boolean recurring;
-    private ArrayList<String> hoursList = new ArrayList<>();
+    private ArrayList<String> hoursList = new ArrayList<String>();
  
 // initialize activity based on internal data
     public VolunteerEvent(String str) {
