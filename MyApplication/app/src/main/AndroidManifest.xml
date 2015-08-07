@@ -71,14 +71,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mhergott.ddsbcommunityhours.MainActivity"/>
         </activity>
-        <activity
-            android:name=".CapturePhoto"
-            android:label="@string/title_activity_capture_photo">
-        </activity>
-        <activity
-            android:name=".SelectPhoto"
-            android:label="@string/title_activity_select_photo" >
-        </activity>
     </application>
 
 </manifest>

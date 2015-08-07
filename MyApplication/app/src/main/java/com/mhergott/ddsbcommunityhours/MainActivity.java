@@ -70,8 +70,8 @@ public class MainActivity extends ActionBarActivity implements android.support.v
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Volunteer Hours");
-        actionBar.addTab(actionBar.newTab().setText("In Progress").setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText("Submitted").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText("Recurring").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText("Single Time").setTabListener(this));
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         //access completed and current names files
@@ -206,21 +206,6 @@ public class MainActivity extends ActionBarActivity implements android.support.v
                 super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-    private void sendEmail() {
-        Intent intent = new Intent(this,EmailActivity.class);
-        startActivity(intent);
-    }
-
-    private void captureImage() {
-        Intent intent = new Intent(this,CapturePhoto.class);
-        startActivity(intent);
-    }
-
-    private void chooseImage(){
-        Intent intent = new Intent(this,SelectPhoto.class);
-        startActivity(intent);
     }
 
     private void arrCreator(String str, boolean x)

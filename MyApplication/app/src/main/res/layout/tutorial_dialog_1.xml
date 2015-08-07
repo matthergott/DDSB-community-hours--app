@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Welcome to the Durham District School Board Community Hours App"
         android:id="@+id/tutorial1text1"
         android:layout_alignParentTop="true"
@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="This app allows you to input your community hours and then send them via email to your guidance department."
         android:id="@+id/tutorial1text2"
         android:layout_below="@+id/tutorial1text1"

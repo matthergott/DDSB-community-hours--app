@@ -265,9 +265,10 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
     }
 
     private void submitEvent(View view) {
-        //requestCandidPhoto();
-        //must add in candid photo functionality still
-        returnToMainActivity();
+        if(v.getCandidPath().equals("No candid photo present"))
+            requestCandidPhoto();
+        else
+            returnToMainActivity();
     }
 
     private void requestCandidPhoto() {
@@ -326,8 +327,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     @Override
     public void onCandidDialogLater(DialogFragment dialog) { //dialog selection
-        addPhotoNameToFile("photo has not been added;");
-
+        //path is already set to "No candid photo present" so do nothing, return to main activity
         returnToMainActivity();
     }
 
@@ -341,7 +341,12 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
-            addPhotoNameToFile(v.getName() + "candid.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //toastImage(candidPhoto);
 
@@ -369,15 +374,19 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
-            addPhotoNameToFile(v.getName() + "candid.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //requestSignaturePhoto();
             returnToMainActivity();
             //toastImage(candidPhoto);
         }
         else{
-            //save string to file saying there is no photo yet
-            addPhotoNameToFile("photo has not been added;");
+            //path is already set to "No candid photo present" so do nothing, return to main activity
             returnToMainActivity();
             //requestSignaturePhoto();
         }

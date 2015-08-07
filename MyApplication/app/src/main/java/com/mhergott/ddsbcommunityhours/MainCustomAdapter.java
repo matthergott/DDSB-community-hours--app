@@ -1,6 +1,7 @@
 package com.mhergott.ddsbcommunityhours;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,13 @@ class MainCustomAdapter extends ArrayAdapter<VolunteerEvent> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater mattsInflater = LayoutInflater.from(getContext());
-        View customView = mattsInflater.inflate(R.layout.activity_main_custom_row, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View customView = inflater.inflate(R.layout.activity_main_custom_row, parent, false);
 
         TextView nameText = (TextView) customView.findViewById(R.id.nameText);
         TextView descriptionText = (TextView) customView.findViewById(R.id.descriptionText);
         TextView organizationText = (TextView) customView.findViewById(R.id.organisationText);
         TextView hoursText = (TextView) customView.findViewById(R.id.hoursText);
-
 
         //add something to set the text to
         VolunteerEvent v = eventsArr[position];

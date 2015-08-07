@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="You will be asked to submit a candid photo for each event. A candid photo can be a picture of you volunteering, of you and your supervisor, or a picture of the results of your volunteering."
         android:id="@+id/tutorial5text1"
         android:layout_alignParentTop="true"

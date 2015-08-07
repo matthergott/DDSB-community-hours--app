@@ -34,6 +34,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
     private String nameStr;
     private Bitmap candidPhoto;
     private Bitmap signaturePhoto;
+    private VolunteerEvent v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +51,10 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         final EditText hours = (EditText) findViewById(R.id.hours_single);
         Button submit = (Button) findViewById(R.id.submit_single);
 
-// check for correct user input
+        // check for correct user input
         submit.setOnClickListener(
                 new Button.OnClickListener(){
-                    public void onClick(View v){
+                    public void onClick(View view){
 
                         boolean isError = false;
 
@@ -109,7 +110,8 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
                         if(!isError) {
                             String toFile =
-                                    nameTxt.getText().toString() + ";" +
+                                    "No candid photo present;No signature photo present;" +
+                                            nameTxt.getText().toString() + ";" +
                                             description.getText().toString() + ";" +
                                             organisation.getText().toString() + ";" +
                                             hours.getText().toString() + ";";
@@ -122,13 +124,15 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
                             } catch (Exception e) {
                             }
                             try {
-                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
+                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
                                 fos.write((toFile).getBytes());
                                 fos.close();
                             } catch (Exception e) {
                             }
 
-                            submitEvent(v);
+                            v = new VolunteerEvent(toFile);
+
+                            submitEvent();
                         }
                         else
                             return;
@@ -160,7 +164,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         return super.onOptionsItemSelected(item);
     }
 
-    public void submitEvent(View view){
+    private void submitEvent(){
         requestCandidPhoto();
     }
 
@@ -186,9 +190,8 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     @Override
     public void onCandidDialogLater(DialogFragment dialog) {
-        addPhotoNameToFile("photo has not been added;");
-        returnToMainActivity();
-        //requestSignaturePhoto();
+        //path is already set to "No candid photo present" so do nothing, move to signature photo
+        requestSignaturePhoto();
     }
     //implemented methods associated methods for candid shot dialog///////////////
 
@@ -214,8 +217,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     @Override
     public void onSignatureDialogLater(DialogFragment dialog) {
-        addPhotoNameToFile("photo has not been added;");
-
+        //path is already set to "No signature photo present" so do nothing, return to main activity
         returnToMainActivity();
     }
     ////implemented methods associated methods for signature dialog///////////////
@@ -229,12 +231,17 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
-            addPhotoNameToFile(nameStr + "candid.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(nameStr + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //toastImage(candidPhoto);
 
-            //requestSignaturePhoto();
-            returnToMainActivity();
+            requestSignaturePhoto();
+            //returnToMainActivity();
         }
         else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
@@ -256,17 +263,16 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
-            addPhotoNameToFile(nameStr + "candid.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(nameStr + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
-            //requestSignaturePhoto();
-            returnToMainActivity();
+            requestSignaturePhoto();
+            //returnToMainActivity();
             //toastImage(candidPhoto);
-        }
-        else{
-            //save string to file saying there is no photo yet
-            addPhotoNameToFile("photo has not been added;");
-            returnToMainActivity();
-            //requestSignaturePhoto();
         }
 
 
@@ -275,7 +281,12 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
-            addPhotoNameToFile(nameStr + "signature.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(nameStr + "signature.jpeg").getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //toastImage(signaturePhoto);
 
@@ -301,16 +312,19 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
-            addPhotoNameToFile(nameStr + "signature.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(nameStr + "signature.jpeg").getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //toastImage(signaturePhoto);
 
             returnToMainActivity();
         }
         else{
-            //save string to file saying there is no photo yet
-            addPhotoNameToFile("photo has not been added;");
-
+            //path is already set to "No signature photo present" so do nothing, return to main activity
             returnToMainActivity();
         }
     }
@@ -324,7 +338,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     private void addPhotoNameToFile(String s) {
         try {
-            FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
+            FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
             fos.write((s).getBytes());
             fos.close();
         } catch (Exception e) {

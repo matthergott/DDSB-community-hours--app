@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="There are also recurring events. These events happen regularly. The information is added once and then additional hours are added to the event each time volunteering is done. After your last time volunteering, you will submit the event."
         android:id="@+id/tutorial4text1"
         android:layout_alignParentTop="true"

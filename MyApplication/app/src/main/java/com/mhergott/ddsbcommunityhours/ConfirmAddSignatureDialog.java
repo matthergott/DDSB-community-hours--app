@@ -32,7 +32,7 @@ public class ConfirmAddSignatureDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Add a candid photo to event")
+        builder.setTitle("Add a signature photo to event")
                 .setMessage("Where is your photo?")
                 .setPositiveButton("Skip", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

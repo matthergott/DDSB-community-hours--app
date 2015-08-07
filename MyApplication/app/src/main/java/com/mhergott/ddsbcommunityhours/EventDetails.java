@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,22 +34,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EventDetails extends ActionBarActivity implements RecurringEventInstanceDialog.NoticeDialogListener, ConfirmDeleteDialog.NoticeDialogListener , SubmitDialog.NoticeDialogListener {
+public class EventDetails extends ActionBarActivity implements RecurringEventInstanceDialog.NoticeDialogListener, ConfirmDeleteDialog.NoticeDialogListener , SubmitDialog.NoticeDialogListener, ConfirmAddCandidShotDialog.NoticeDialogListener {
 
     private static final int SUBMIT_RESULT_LOAD_IMAGE = 54545;
-    private static final int SUBMIT_CAMERA_REQUEST = 10000;
+    private static final int SUBMIT_CAMERA_REQUEST = 45454;
+    private static final int CANDID_CAMERA_REQUEST = 21212;
+    private static final int CANDID_RESULT_LOAD_IMAGE = 12121;
     String nameTxt;
     String event;
     int position;
     List<String> namesList = new ArrayList<String>();
     ArrayList<String> hoursList;
     boolean recurring = false;
+    boolean recurringEmpty = false;
     LinearLayout linearListView;
     VolunteerEvent v;
     static final String STATE_EVENT = "passedEvent";
     static final String STATE_POSITION = "passedPosition";
     private Bitmap signaturePhoto;
     private String selectedSignatureImagePath;
+    private Bitmap candidPhoto;
+    private String selectedCandidImagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,15 +91,25 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         }
 
         v = new VolunteerEvent(event,position);
-// set up text fields
+        // set up text fields
         TextView name = (TextView) findViewById(R.id.nameTextEventDetails);
-        name.setText(v.getName().toString());
+        name.setText(v.getName());
         TextView description = (TextView) findViewById(R.id.descriptionTextEventDetails);
-        description.setText(v.getDescription().toString());
+        description.setText(v.getDescription());
         TextView organisation = (TextView) findViewById(R.id.organisationTextEventDetails);
-        organisation.setText(v.getOrganisation().toString());
+        organisation.setText(v.getOrganisation());
         TextView hours = (TextView) findViewById(R.id.hoursTextEventDetails);
-        hours.setText(v.getHours().toString());
+        hours.setText(v.getHours());
+
+        ImageView candidPhotoCheckBox = (ImageView) findViewById(R.id.candidPhotoCheckBox);
+        if(v.getCandidPath().equals("No candid photo present"))
+            candidPhotoCheckBox.setImageResource(android.R.drawable.checkbox_off_background);
+        else
+            candidPhotoCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
+
+        if(v.getHours().equals("0")){
+            recurringEmpty = true;
+        }
         //check if there are any recurring events listed in the volunteer event passed in
         if(v.getHoursList()!=null) {
             hoursList = v.getHoursList();
@@ -111,7 +127,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 TextView hoursView = (TextView) mLinearView.findViewById(R.id.recurringHours);
 
                 mLinearView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-                ((LinearLayout) linearListView).addView((RelativeLayout) mLinearView);
+                linearListView.addView(mLinearView);
 
                 //set item into row
                 String str = hoursList.get(i);
@@ -145,10 +161,15 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 candidPhotoClick();
             }
         });
+
+        Toast.makeText(getApplicationContext(), "Click envelope to submit event",
+                Toast.LENGTH_LONG).show();
     }
 
     private void candidPhotoClick() {
-        Toast.makeText(getApplicationContext(), "roasty toasty", Toast.LENGTH_LONG).show();
+        if(v.getCandidPath().equals("No candid photo present")){
+            requestCandidPhoto();
+        }
     }
 
     @Override
@@ -165,6 +186,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         // Inflate the menu only if it is recurring
         if(recurring)
             getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
+        else if(recurringEmpty)
+            getMenuInflater().inflate(R.menu.menu_event_details_recurring_empty, menu);
         else
             getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
         return true;
@@ -197,13 +220,40 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         }
         return true;
     }
+
+    //implemented methods and associated methods for candid shot dialog///////////////
+    private void requestCandidPhoto() {
+        DialogFragment g = new ConfirmAddCandidShotDialog();
+        g.show(getSupportFragmentManager(), "confirmAddCandidShot");
+    }
+
+    @Override
+    public void onCandidDialogCapture(DialogFragment dialog) {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CANDID_CAMERA_REQUEST);
+    }
+
+    @Override
+    public void onCandidDialogSelect(DialogFragment dialog) {
+        Intent i = new Intent(
+                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(i, CANDID_RESULT_LOAD_IMAGE);
+    }
+
+    @Override
+    public void onCandidDialogLater(DialogFragment dialog) {
+        //path is already set to "No candid photo present" so do nothing
+    }
+    //implemented methods associated methods for candid shot dialog///////////////
+
 // open up dialog to enable user to submit
     private void submit() {
         DialogFragment f = new SubmitDialog();
         f.show(getSupportFragmentManager(), "submit");
     }
 
-    public void ViewRecurringEventInstance(String date, String hours, String toDelete){
+    private void ViewRecurringEventInstance(String date, String hours, String toDelete){
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("recurring_event_instance_date", date);
@@ -224,7 +274,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         return;
     }
 
-    public void confirmDelete(){
+    private void confirmDelete(){
         DialogFragment g = new ConfirmDeleteDialog();
         g.show(getSupportFragmentManager(), "confirmDelete");
     }
@@ -321,6 +371,59 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == CANDID_CAMERA_REQUEST && resultCode == RESULT_OK) {
+            candidPhoto = (Bitmap) data.getExtras().get("data");
+
+            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
+
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+
+            //toastImage(candidPhoto);
+
+            //requestSignaturePhoto();
+            //returnToMainActivity();
+        }
+        else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            selectedCandidImagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            try {
+                candidPhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
+
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+
+            //requestSignaturePhoto();
+            //returnToMainActivity();
+            //toastImage(candidPhoto);
+            Intent intent = new Intent(this,EventDetails.class);
+            intent.putExtra("event_name",v.getName());
+            intent.putExtra("tab",0);
+            startActivity(intent);
+        }
+
         if (requestCode == SUBMIT_CAMERA_REQUEST && resultCode == RESULT_OK) {
             signaturePhoto = (Bitmap) data.getExtras().get("data");
 
@@ -342,7 +445,12 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
-            addPhotoNameToFile(v.getName() + "signature.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //toastImage(candidPhoto);
 
@@ -386,7 +494,12 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
-            addPhotoNameToFile(v.getName() + "signature.jpeg;");
+            try {
+                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
 
             //requestSignaturePhoto();
             toEmailActivity();
@@ -405,6 +518,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         intent.putExtra("organisation", v.getOrganisation());
         intent.putExtra("hours", v.getHours());
         intent.putExtra("signature", v.getName()+"signature.jpeg");
+        intent.putExtra("candid", v.getName()+"candid.jpeg");
         startActivity(intent);
         finish();
     }

@@ -42,6 +42,9 @@ public class EmailActivity extends ActionBarActivity {
     private String signatureFileName;
     private Bitmap signaturePic;
     private File signatureImageFile;
+    private String candidFileName;
+    private File candidImageFile;
+    private Bitmap candidPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,19 @@ public class EmailActivity extends ActionBarActivity {
         organisation = bundle.getString("organisation");
         hours = bundle.getString("hours");
         signatureFileName = bundle.getString("signature");
+        candidFileName = bundle.getString("candid");
 
         //get signature photo bitmap from internal storage
         signatureImageFile = getBaseContext().getFileStreamPath(signatureFileName);
         try {
             signaturePic = BitmapFactory.decodeStream(new FileInputStream(signatureImageFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        candidImageFile = getBaseContext().getFileStreamPath(candidFileName);
+        try {
+            candidPic = BitmapFactory.decodeStream(new FileInputStream(candidImageFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -142,16 +153,19 @@ public class EmailActivity extends ActionBarActivity {
 
         Canvas canvas = new Canvas(bm);
 
-        canvas.drawText(userName,225,160,paint);
-        canvas.drawText(userDOB,1000,160,paint);
+        canvas.drawText(userName,350,160,paint);
+        canvas.drawText(userDOB,1100,160,paint);
         canvas.drawText(userSchool,220,200,paint);
-        canvas.drawText(name,100,300,paint);
+        canvas.drawText(name,120,300,paint);
         canvas.drawText(description,100,360,paint);
         canvas.drawText(organisation,615,300,paint);
         canvas.drawText(hours,1330,340,paint);
 
+        Bitmap resizedCandidBitmap = Bitmap.createScaledBitmap(candidPic, 100, 100, false);
+        canvas.drawBitmap(resizedCandidBitmap, 428, 281, paint);
+
         Bitmap resizedSignatureBitmap = Bitmap.createScaledBitmap(signaturePic, 100, 100, false);
-        canvas.drawBitmap(resizedSignatureBitmap, 428, 281, paint);
+        canvas.drawBitmap(resizedSignatureBitmap, 1000, 281, paint);
 
         /*
         //If the text is bigger than the canvas , reduce the font size
@@ -171,14 +185,14 @@ public class EmailActivity extends ActionBarActivity {
         //return new BitmapDrawable(getResources(), bm);
     }
 
-    public static int convertToPixels(Context context, int nDP)
+    private static int convertToPixels(Context context, int nDP)
     {
         //used in the writeTextToDrawable method above
         final float conversionScale = context.getResources().getDisplayMetrics().density;
         return (int) ((nDP * conversionScale) + 0.5f) ;
     }
 // same the image for later reference
-    public boolean saveImageToInternalStorage(Bitmap image) {
+    private boolean saveImageToInternalStorage(Bitmap image) {
         try {
             // Use the compress method on the Bitmap object to write image to
             // the OutputStream

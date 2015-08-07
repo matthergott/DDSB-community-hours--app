@@ -59,6 +59,7 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
                         }
                         if(!isError) {
                             String toFile =
+                                    "No candid photo present;No signature photo present;" +
                                     nameTxt.getText().toString() + ";" +
                                             description.getText().toString() + ";" +
                                             organisation.getText().toString() + ";" + "0;";
@@ -109,7 +110,7 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public void submitEvent(View view){
+    private void submitEvent(View view){
         Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra("position_value",0);
         startActivity(intent);
