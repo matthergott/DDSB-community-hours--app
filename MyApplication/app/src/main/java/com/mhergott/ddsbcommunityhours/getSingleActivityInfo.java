@@ -42,12 +42,14 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         setContentView(R.layout.activity_get_single_activity_info);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Single Activity");
+        actionBar.setTitle("Single Time Activity");
 
 
         final EditText nameTxt = (EditText) findViewById(R.id.name_single);
         final EditText description = (EditText) findViewById(R.id.description_single);
         final EditText organisation = (EditText) findViewById(R.id.organisation_single);
+        final EditText supervisorName = (EditText) findViewById(R.id.supervisor_name_single);
+        final EditText telephoneNumber = (EditText) findViewById(R.id.telephone_single);
         final EditText hours = (EditText) findViewById(R.id.hours_single);
         Button submit = (Button) findViewById(R.id.submit_single);
 
@@ -82,30 +84,36 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
                         else{
                             organisation.setBackgroundColor(Color.TRANSPARENT);
                         }
+                        if(supervisorName.getText().toString().equals("")) {
+                            isError = true;
+                            supervisorName.setBackgroundColor(Color.RED);
+                            supervisorName.setHint("Please enter supervisor's name");
+                        }
+                        else{
+                            supervisorName.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                        if(telephoneNumber.getText().toString().length()!=10) {
+                            isError = true;
+                            telephoneNumber.setBackgroundColor(Color.RED);
+                            telephoneNumber.setText("");
+                            telephoneNumber.setHint("Please enter 10 digit phone number");
+                        }
+                        else{
+                            telephoneNumber.setBackgroundColor(Color.TRANSPARENT);
+                        }
                         if(hours.getText().toString().equals("")) {
                             isError = true;
                             hours.setBackgroundColor(Color.RED);
                             hours.setHint("Please enter hours completed");
                         }
-                        else{
-                            hours.setBackgroundColor(Color.TRANSPARENT);
-                        }
-
-                        for (int a = 0; a < hours.getText().toString().length(); a++){
-                            int x = (int) hours.getText().toString().charAt(a);
-                            if(x<48 || x>57) {
-                                isError = true;
-                                hours.setBackgroundColor(Color.RED);
-                                hours.setText("");
-                                hours.setHint("Please enter hours completed");
-                                a = hours.getText().toString().length();
-                            }
-                        }
-                        if(Integer.valueOf(hours.getText().toString())<=0){
+                        else if(Integer.valueOf(hours.getText().toString())<=0){
                             isError = true;
                             hours.setBackgroundColor(Color.RED);
                             hours.setText("");
                             hours.setHint("Please enter hours completed");
+                        }
+                        else{
+                            hours.setBackgroundColor(Color.TRANSPARENT);
                         }
 
                         if(!isError) {
@@ -114,6 +122,8 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
                                             nameTxt.getText().toString() + ";" +
                                             description.getText().toString() + ";" +
                                             organisation.getText().toString() + ";" +
+                                            supervisorName.getText().toString() + ";" +
+                                            telephoneNumber.getText().toString() + ";" +
                                             hours.getText().toString() + ";";
                             nameStr = (nameTxt.getText()).toString();
 
