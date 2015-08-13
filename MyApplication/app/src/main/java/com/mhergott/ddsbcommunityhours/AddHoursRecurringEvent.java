@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -368,6 +370,22 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
             try {
                 candidPhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try { //check if the image is rotated, if it is, rotate it accordingly
+                ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+                if(orientation == 6)
+                    matrix.postRotate(90);
+                else if(orientation == 3)
+                    matrix.postRotate(180);
+                else if(orientation == 8)
+                    matrix.postRotate(270);
+                candidPhoto = Bitmap.createBitmap(candidPhoto, 0, 0,
+                        candidPhoto.getWidth(), candidPhoto.getHeight(), matrix, true);
             } catch (IOException e) {
                 e.printStackTrace();
             }

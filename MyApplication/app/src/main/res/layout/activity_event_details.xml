@@ -127,9 +127,80 @@
             android:background="@android:color/darker_gray"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/dividingLine3eventDetails"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/signaturePhotoLinearLayout">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:text="Signature Photo Present:"
+                android:id="@+id/signaturePhotoPresent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="22sp"
+                android:id="@+id/signaturePhotoCheckBox"
+                android:adjustViewBounds="true"
+                android:src="@android:drawable/checkbox_on_background"
+                android:layout_marginRight="20dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:id="@+id/dividingLine2eventDetails"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/submittedLinearLayout">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:text="Activity Submitted:"
+                android:id="@+id/activitySubmitted"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="22sp"
+                android:id="@+id/submittedCheckBox"
+                android:adjustViewBounds="true"
+                android:src="@android:drawable/checkbox_on_background"
+                android:layout_marginRight="20dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/dividingLine4eventDetails"/>
+
 
         <TextView
             android:layout_width="wrap_content"

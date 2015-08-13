@@ -77,7 +77,7 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
                         }
                         if(!isError) {
                             String toFile =
-                                    "No candid photo present;No signature photo present;" +
+                                    "No candid photo present;No signature photo present;Not submitted;" +
                                         nameTxt.getText().toString() + ";" +
                                         description.getText().toString() + ";" +
                                         organisation.getText().toString() + ";" +

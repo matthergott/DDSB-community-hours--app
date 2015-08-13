@@ -45,6 +45,8 @@ public class EmailActivity extends ActionBarActivity {
     private String candidFileName;
     private File candidImageFile;
     private Bitmap candidPic;
+    private String supervisorName;
+    private String supervisorNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class EmailActivity extends ActionBarActivity {
         name = bundle.getString("name");
         description = bundle.getString("description");
         organisation = bundle.getString("organisation");
+        supervisorName = bundle.getString("sup name");
+        supervisorNumber = bundle.getString("sup number");
         hours = bundle.getString("hours");
         signatureFileName = bundle.getString("signature");
         candidFileName = bundle.getString("candid");
@@ -159,6 +163,7 @@ public class EmailActivity extends ActionBarActivity {
         canvas.drawText(name,50,300,paint);
         canvas.drawText(description,50,360,paint);
         canvas.drawText(organisation,580,300,paint);
+        canvas.drawText(supervisorNumber,810,340,paint);
         canvas.drawText(hours,1300,340,paint);
 
         Bitmap resizedCandidBitmap = Bitmap.createScaledBitmap(candidPic, 100, 100, false);
@@ -166,6 +171,8 @@ public class EmailActivity extends ActionBarActivity {
 
         Bitmap resizedSignatureBitmap = Bitmap.createScaledBitmap(signaturePic, 100, 100, false);
         canvas.drawBitmap(resizedSignatureBitmap, 1000, 281, paint);
+
+        canvas.drawText(supervisorName,950,340,paint);
 
         /*
         //If the text is bigger than the canvas , reduce the font size

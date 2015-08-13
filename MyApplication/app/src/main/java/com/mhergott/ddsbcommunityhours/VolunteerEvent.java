@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class VolunteerEvent extends ActionBarActivity {
     private String signaturePath;
     private String candidPath;
+    private String submitted;
     private String name;
     private String description;
     private String organisation;
@@ -22,6 +23,8 @@ public class VolunteerEvent extends ActionBarActivity {
         candidPath = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         signaturePath = str.substring(0, str.indexOf(';'));
+        str = str.substring(str.indexOf(';') + 1);
+        submitted = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         name = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
@@ -41,6 +44,8 @@ public class VolunteerEvent extends ActionBarActivity {
         candidPath = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         signaturePath = str.substring(0, str.indexOf(';'));
+        str = str.substring(str.indexOf(';') + 1);
+        submitted = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         name = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
@@ -88,8 +93,8 @@ public class VolunteerEvent extends ActionBarActivity {
     */
     public String setCandidPhotoPath(String s){
         candidPath = s;
-        String toFile = candidPath + ";" + signaturePath + ";" + name + ";" +
-                description + ";" + organisation + ";" + supervisorName + ";" +
+        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+                name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
             for (int a = 0; a < hoursList.size(); a++){
@@ -100,8 +105,8 @@ public class VolunteerEvent extends ActionBarActivity {
     }
     public String setSignaturePhotoPath(String s){
         signaturePath = s;
-        String toFile = candidPath + ";" + signaturePath + ";" + name + ";" +
-                description + ";" + organisation + ";" + supervisorName + ";" +
+        String toFile = candidPath + ";" + signaturePath + ";" + "submitted;" +
+                name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
             for (int a = 0; a < hoursList.size(); a++){
@@ -115,6 +120,9 @@ public class VolunteerEvent extends ActionBarActivity {
     }
     public String getSignaturePath() {
         return signaturePath;
+    }
+    public boolean isSubmitted(){
+        return !submitted.equals("Not submitted");
     }
     public String getName(){
         return name;
@@ -141,8 +149,8 @@ public class VolunteerEvent extends ActionBarActivity {
         temp += Integer.valueOf(string.substring(0,string.indexOf(';')));
         hours = String.valueOf(temp);
 
-        String toFile = candidPath + ";" + signaturePath + ";" + name + ";" +
-                description + ";" + organisation + ";" + supervisorName + ";" +
+        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+                name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
             for (int a = 0; a < hoursList.size(); a++){
@@ -159,8 +167,8 @@ public class VolunteerEvent extends ActionBarActivity {
         temp -= Integer.valueOf(string.substring(0,string.indexOf(';')));
         hours = String.valueOf(temp);
 
-        String toFile = candidPath + ";" + signaturePath + ";" + name + ";" +
-                description + ";" + organisation + ";" + supervisorName + ";" +
+        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+                name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
             for (int a = 0; a < hoursList.size(); a++){

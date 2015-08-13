@@ -107,6 +107,18 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         else
             candidPhotoCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
 
+        ImageView signaturePhotoCheckBox = (ImageView) findViewById(R.id.signaturePhotoCheckBox);
+        if(v.getSignaturePath().equals("No signature photo present"))
+            signaturePhotoCheckBox.setImageResource(android.R.drawable.checkbox_off_background);
+        else
+            signaturePhotoCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
+
+        ImageView submittedCheckBox = (ImageView) findViewById(R.id.submittedCheckBox);
+        if(!v.isSubmitted())
+            submittedCheckBox.setImageResource(android.R.drawable.checkbox_off_background);
+        else
+            submittedCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
+
         if(v.getHours().equals("0")){
             recurringEmpty = true;
         }
@@ -162,14 +174,29 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             }
         });
 
+        LinearLayout signaturePhotoLinearLayout = (LinearLayout) findViewById(R.id.signaturePhotoLinearLayout);
+        signaturePhotoLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signaturePhotoClick();
+            }
+        });
+
         Toast.makeText(getApplicationContext(), "Click envelope to submit event",
                 Toast.LENGTH_LONG).show();
     }
 
     private void candidPhotoClick() {
-        if(v.getCandidPath().equals("No candid photo present")){
+        if(v.getCandidPath().equals("No candid photo present"))
             requestCandidPhoto();
-        }
+    }
+
+    private void signaturePhotoClick() {
+        if(v.getSignaturePath().equals("No signature photo present"))
+            Toast.makeText(getApplicationContext(),
+                    "You may only add the signature photo when you are ready to submit. If you are ready " +
+                    "to submit, tap the envelope",
+                    Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -183,8 +210,10 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu only if it is recurring
-        if(recurring)
+        // Inflate a different menu depending on the type of event
+        if(v.isSubmitted())
+            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+        else if(recurring)
             getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
         else if(recurringEmpty)
             getMenuInflater().inflate(R.menu.menu_event_details_recurring_empty, menu);
@@ -406,6 +435,22 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 e.printStackTrace();
             }
 
+            try { //check if the image is rotated, if it is, rotate it accordingly
+                ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+                if(orientation == 6)
+                    matrix.postRotate(90);
+                else if(orientation == 3)
+                    matrix.postRotate(180);
+                else if(orientation == 8)
+                    matrix.postRotate(270);
+                candidPhoto = Bitmap.createBitmap(candidPhoto, 0, 0,
+                        candidPhoto.getWidth(), candidPhoto.getHeight(), matrix, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
@@ -426,22 +471,6 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
         if (requestCode == SUBMIT_CAMERA_REQUEST && resultCode == RESULT_OK) {
             signaturePhoto = (Bitmap) data.getExtras().get("data");
-
-            try { //check if the image is rotated, if it is, rotate it accordingly
-                ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                Matrix matrix = new Matrix();
-                if(orientation == 6)
-                    matrix.postRotate(90);
-                else if(orientation == 3)
-                    matrix.postRotate(180);
-                else if(orientation == 8)
-                    matrix.postRotate(270);
-                signaturePhoto = Bitmap.createBitmap(signaturePhoto, 0, 0,
-                        signaturePhoto.getWidth(), signaturePhoto.getHeight(), matrix, true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
@@ -516,6 +545,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         intent.putExtra("name", v.getName());
         intent.putExtra("description", v.getDescription());
         intent.putExtra("organisation", v.getOrganisation());
+        intent.putExtra("sup name", v.getSupervisorName());
+        intent.putExtra("sup number", v.getTelephoneNumber());
         intent.putExtra("hours", v.getHours());
         intent.putExtra("signature", v.getName()+"signature.jpeg");
         intent.putExtra("candid", v.getName()+"candid.jpeg");
