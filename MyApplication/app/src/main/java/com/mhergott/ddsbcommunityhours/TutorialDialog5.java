@@ -33,12 +33,11 @@ public class TutorialDialog5 extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.tutorial_dialog_5, null);
-        builder.setTitle("Tutorial")
-                .setNeutralButton("Next", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNext5(TutorialDialog5.this);
-                    }
-                });
+        builder.setTitle("Candid Photo").setNeutralButton("Next", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mListener.onDialogNext5(TutorialDialog5.this);
+            }
+        });
         builder.setView(view);
         return builder.create();
     }

@@ -6,9 +6,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="There are also recurring events. These events happen regularly. The information is added once and then additional hours are added to the event each time volunteering is done. After your last time volunteering, you will submit the event."
+        android:text="These events happen regularly e.g. every weekend for a month. The background information is setup once and then you only need to add the number of hours and the date each time you volunteer. After your last time volunteering, you will submit the event."
         android:id="@+id/tutorial4text1"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:layout_margin="10dp"
+        android:gravity="left"/>
 </RelativeLayout>

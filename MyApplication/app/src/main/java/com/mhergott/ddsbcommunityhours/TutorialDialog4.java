@@ -33,8 +33,8 @@ public class TutorialDialog4 extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.tutorial_dialog_4, null);
-        builder.setTitle("Tutorial")
-                .setNeutralButton("Next", new DialogInterface.OnClickListener() {
+        builder.setTitle("Recurring events").setNeutralButton("Next", new DialogInterface
+                                                                              .OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogNext4(TutorialDialog4.this);
                     }

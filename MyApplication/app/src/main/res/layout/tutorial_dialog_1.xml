@@ -10,16 +10,29 @@
         android:id="@+id/tutorial1text1"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:layout_margin="10dp"
+        android:gravity="left"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="This app allows you to input your community hours and then send them via email to your guidance department."
+        android:text="This app allows you to enter your community hours and then submit them via email to your guidance department."
         android:id="@+id/tutorial1text2"
         android:layout_below="@+id/tutorial1text1"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:gravity="center" />
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="left"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="There are two types of volunteer events: single-time and recurring."
+        android:id="@+id/textView"
+        android:gravity="left"
+        android:layout_below="@+id/tutorial1text2"
+        android:layout_alignLeft="@+id/tutorial1text2"
+        android:layout_alignStart="@+id/tutorial1text2"/>
 </RelativeLayout>

@@ -33,7 +33,7 @@ public class TutorialDialog3 extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.tutorial_dialog_3, null);
-        builder.setTitle("Tutorial")
+        builder.setTitle("Single-time events")
                 .setNeutralButton("Next", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogNext3(TutorialDialog3.this);

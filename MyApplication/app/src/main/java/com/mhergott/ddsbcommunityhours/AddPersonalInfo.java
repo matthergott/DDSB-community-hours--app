@@ -27,8 +27,7 @@ import java.util.Calendar;
 
 
 public class AddPersonalInfo extends ActionBarActivity implements AdapterView.OnItemSelectedListener,
-        TutorialDialog1.NoticeDialogListener, TutorialDialog2.NoticeDialogListener,
-        TutorialDialog3.NoticeDialogListener, TutorialDialog4.NoticeDialogListener,
+        TutorialDialog1.NoticeDialogListener,TutorialDialog3.NoticeDialogListener, TutorialDialog4.NoticeDialogListener,
         TutorialDialog5.NoticeDialogListener, TutorialDialog6.NoticeDialogListener {
 
     String schoolSelected;
@@ -92,7 +91,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long id) {
-                monthSelected = arg0.getItemAtPosition(position).toString();;//saving the value selected
+                monthSelected = arg0.getItemAtPosition(position).toString();//saving the value selected
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {}
@@ -273,14 +272,14 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
     }
     @Override
     public void onDialogNext(DialogFragment dialog) {
-        DialogFragment frag = new TutorialDialog2();
-        frag.show(getSupportFragmentManager(), "confirmDelete");
-    }
-    @Override
-    public void onDialogNext2(DialogFragment dialog) {
         DialogFragment frag = new TutorialDialog3();
         frag.show(getSupportFragmentManager(), "confirmDelete");
     }
+//    @Override
+//    public void onDialogNext2(DialogFragment dialog) {
+////        DialogFragment frag = new TutorialDialog4();
+////        frag.show(getSupportFragmentManager(), "confirmDelete");
+//    }
     @Override
     public void onDialogNext3(DialogFragment dialog) {
         DialogFragment frag = new TutorialDialog4();
@@ -296,13 +295,14 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
     public void onDialogNext5(DialogFragment dialog) {
         DialogFragment frag = new TutorialDialog6(); //keep designing the fifth one!!!!!
         frag.show(getSupportFragmentManager(), "confirmDelete");
+
     }
 
     @Override
     public void onDialogNext6(DialogFragment dialog) {
-        returnToMainActivity();
-        Toast.makeText(getApplicationContext(), "Click the three dots up top to get started",
-                Toast.LENGTH_LONG).show();
-        finish();
+		returnToMainActivity();
+		Toast.makeText(getApplicationContext(), "Click the three dots up top to get started",
+							  Toast.LENGTH_LONG).show();
+		finish();
     }
 }

@@ -3,12 +3,13 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Lastly, you will be asked for a photo of a signature. Have your supervisor sign a piece of paper, and take a photo of the piece of paper with the signature."
         android:id="@+id/tutorial6text1"
         android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:gravity="left"/>
 </RelativeLayout>
