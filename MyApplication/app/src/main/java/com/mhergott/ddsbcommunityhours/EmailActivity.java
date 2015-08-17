@@ -45,6 +45,8 @@ public class EmailActivity extends ActionBarActivity {
     private String candidFileName;
     private File candidImageFile;
     private Bitmap candidPic;
+    private String supervisorName;
+    private String supervisorNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class EmailActivity extends ActionBarActivity {
         name = bundle.getString("name");
         description = bundle.getString("description");
         organisation = bundle.getString("organisation");
+        supervisorName = bundle.getString("sup name");
+        supervisorNumber = bundle.getString("sup number");
         hours = bundle.getString("hours");
         signatureFileName = bundle.getString("signature");
         candidFileName = bundle.getString("candid");
@@ -145,7 +149,7 @@ public class EmailActivity extends ActionBarActivity {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.BLACK);
         paint.setTypeface(tf);
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextAlign(Paint.Align.LEFT);
         paint.setTextSize(convertToPixels(mContext, 13));
 
         //Rect textRect = new Rect();
@@ -153,19 +157,22 @@ public class EmailActivity extends ActionBarActivity {
 
         Canvas canvas = new Canvas(bm);
 
-        canvas.drawText(userName,350,160,paint);
-        canvas.drawText(userDOB,1100,160,paint);
-        canvas.drawText(userSchool,220,200,paint);
-        canvas.drawText(name,120,300,paint);
-        canvas.drawText(description,100,360,paint);
-        canvas.drawText(organisation,615,300,paint);
-        canvas.drawText(hours,1330,340,paint);
+        canvas.drawText(userName,200,160,paint);
+        canvas.drawText(userDOB,950,160,paint);
+        canvas.drawText(userSchool,150,200,paint);
+        canvas.drawText(name,50,300,paint);
+        canvas.drawText(description,50,360,paint);
+        canvas.drawText(organisation,580,300,paint);
+        canvas.drawText(supervisorNumber,810,340,paint);
+        canvas.drawText(hours,1300,340,paint);
 
         Bitmap resizedCandidBitmap = Bitmap.createScaledBitmap(candidPic, 100, 100, false);
         canvas.drawBitmap(resizedCandidBitmap, 428, 281, paint);
 
         Bitmap resizedSignatureBitmap = Bitmap.createScaledBitmap(signaturePic, 100, 100, false);
         canvas.drawBitmap(resizedSignatureBitmap, 1000, 281, paint);
+
+        canvas.drawText(supervisorName,950,340,paint);
 
         /*
         //If the text is bigger than the canvas , reduce the font size

@@ -40,7 +40,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     private static final int SUBMIT_CAMERA_REQUEST = 45454;
     private static final int CANDID_CAMERA_REQUEST = 21212;
     private static final int CANDID_RESULT_LOAD_IMAGE = 12121;
-    String nameTxt;
+    String eventTimeStamp;
     String event;
     int position;
     List<String> namesList = new ArrayList<String>();
@@ -69,18 +69,18 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         Bundle bundle = getIntent().getExtras();
         if (savedInstanceState != null) { // if there was no bundle passed to the activity, use the saved state
             // Restore value of members from saved state
-            nameTxt = savedInstanceState.getString(STATE_EVENT);
+            eventTimeStamp = savedInstanceState.getString(STATE_EVENT);
             position = savedInstanceState.getInt(STATE_POSITION);
         }
         if(bundle!=null){
             // Use values passed to activity in a bundle
-            nameTxt = bundle.getString("event_name");
+            eventTimeStamp = bundle.getString("event_time_stamp");
             position = bundle.getInt("tab");
         }
 
         FileInputStream fis;
         try {
-            fis = openFileInput(nameTxt + ".txt");
+            fis = openFileInput(eventTimeStamp + ".txt");
             byte[] input = new byte[fis.available()];
             while (fis.read(input) != -1) {}
             event = new String(input, "UTF-8");
@@ -107,9 +107,21 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         else
             candidPhotoCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
 
-        if(v.getHours().equals("0")){
-            recurringEmpty = true;
-        }
+        ImageView signaturePhotoCheckBox = (ImageView) findViewById(R.id.signaturePhotoCheckBox);
+        if(v.getSignaturePath().equals("No signature photo present"))
+            signaturePhotoCheckBox.setImageResource(android.R.drawable.checkbox_off_background);
+        else
+            signaturePhotoCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
+
+        ImageView submittedCheckBox = (ImageView) findViewById(R.id.submittedCheckBox);
+        if(!v.isSubmitted())
+            submittedCheckBox.setImageResource(android.R.drawable.checkbox_off_background);
+        else
+            submittedCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
+
+        //if(v.getHours().equals("0")){
+        //    recurringEmpty = true;
+        //}
         //check if there are any recurring events listed in the volunteer event passed in
         if(v.getHoursList()!=null) {
             hoursList = v.getHoursList();
@@ -162,20 +174,36 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             }
         });
 
+        LinearLayout signaturePhotoLinearLayout = (LinearLayout) findViewById(R.id.signaturePhotoLinearLayout);
+        signaturePhotoLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signaturePhotoClick();
+            }
+        });
+
+        if(Integer.parseInt(v.getHours())>0)
         Toast.makeText(getApplicationContext(), "Click envelope to submit event",
                 Toast.LENGTH_LONG).show();
     }
 
     private void candidPhotoClick() {
-        if(v.getCandidPath().equals("No candid photo present")){
+        if(v.getCandidPath().equals("No candid photo present"))
             requestCandidPhoto();
-        }
+    }
+
+    private void signaturePhotoClick() {
+        if(v.getSignaturePath().equals("No signature photo present"))
+            Toast.makeText(getApplicationContext(),
+                    "You may only add the signature photo when you are ready to submit. If you are ready " +
+                    "to submit, tap the envelope",
+                    Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the event and position passed into the activity
-        savedInstanceState.putString(STATE_EVENT, nameTxt);
+        savedInstanceState.putString(STATE_EVENT, eventTimeStamp);
         savedInstanceState.putInt(STATE_POSITION, position);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -183,13 +211,15 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu only if it is recurring
-        if(recurring)
-            getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
-        else if(recurringEmpty)
+        // Inflate a different menu depending on the type of event
+        if(v.isSubmitted())
+            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+        else if(!recurring)
+            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+        else if(v.getHours().equals("0"))
             getMenuInflater().inflate(R.menu.menu_event_details_recurring_empty, menu);
         else
-            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+            getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
         return true;
     }
 
@@ -267,7 +297,6 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     @Override
     public void onDialogDelete(DialogFragment dialog) {
         confirmDelete();
-        return;
     }
     @Override
     public void onDialogCancel(DialogFragment dialog) {
@@ -285,7 +314,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             String toDelete = sharedPref.getString("recurring_event_instance_toDelete", "");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write(v.removeHours(toDelete).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -293,7 +322,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
             finish();
             Intent intent = new Intent(this, EventDetails.class);
-            intent.putExtra("event_name", v.getName());
+            intent.putExtra("event_time_stamp", v.getTimeStamp());
             intent.putExtra("tab", 0);
             startActivity(intent);
         }
@@ -377,7 +406,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -406,27 +435,6 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                 e.printStackTrace();
             }
 
-            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
-
-            try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
-                fos.close();
-            } catch (Exception e) {
-            }
-
-            //requestSignaturePhoto();
-            //returnToMainActivity();
-            //toastImage(candidPhoto);
-            Intent intent = new Intent(this,EventDetails.class);
-            intent.putExtra("event_name",v.getName());
-            intent.putExtra("tab",0);
-            startActivity(intent);
-        }
-
-        if (requestCode == SUBMIT_CAMERA_REQUEST && resultCode == RESULT_OK) {
-            signaturePhoto = (Bitmap) data.getExtras().get("data");
-
             try { //check if the image is rotated, if it is, rotate it accordingly
                 ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
                 int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
@@ -437,17 +445,38 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
                     matrix.postRotate(180);
                 else if(orientation == 8)
                     matrix.postRotate(270);
-                signaturePhoto = Bitmap.createBitmap(signaturePhoto, 0, 0,
-                        signaturePhoto.getWidth(), signaturePhoto.getHeight(), matrix, true);
+                candidPhoto = Bitmap.createBitmap(candidPhoto, 0, 0,
+                        candidPhoto.getWidth(), candidPhoto.getHeight(), matrix, true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            saveImageToInternalStorage(candidPhoto, "candid.jpeg");
+
+            try {
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
+                fos.close();
+            } catch (Exception e) {
+            }
+
+            //requestSignaturePhoto();
+            //returnToMainActivity();
+            //toastImage(candidPhoto);
+            Intent intent = new Intent(this,EventDetails.class);
+            intent.putExtra("event_time_stamp",v.getTimeStamp());
+            intent.putExtra("tab",0);
+            startActivity(intent);
+        }
+
+        if (requestCode == SUBMIT_CAMERA_REQUEST && resultCode == RESULT_OK) {
+            signaturePhoto = (Bitmap) data.getExtras().get("data");
+
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getTimeStamp() + "signature.jpeg").getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -495,8 +524,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getTimeStamp() + "signature.jpeg").getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -516,6 +545,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         intent.putExtra("name", v.getName());
         intent.putExtra("description", v.getDescription());
         intent.putExtra("organisation", v.getOrganisation());
+        intent.putExtra("sup name", v.getSupervisorName());
+        intent.putExtra("sup number", v.getTelephoneNumber());
         intent.putExtra("hours", v.getHours());
         intent.putExtra("signature", v.getName()+"signature.jpeg");
         intent.putExtra("candid", v.getName()+"candid.jpeg");
@@ -533,7 +564,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     }
     private void addPhotoNameToFile(String s) {
         try {
-            FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+            FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_APPEND);
             fos.write((s).getBytes());
             fos.close();
         } catch (Exception e) {

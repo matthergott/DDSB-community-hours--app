@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -251,7 +253,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             String toFile = daySelected + " " + monthSelected + " " + yearSelected + ";" + counter + ";";
             //write the details to the event file
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write(v.addHours(toFile).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -342,8 +344,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -372,11 +374,27 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
                 e.printStackTrace();
             }
 
+            try { //check if the image is rotated, if it is, rotate it accordingly
+                ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+                if(orientation == 6)
+                    matrix.postRotate(90);
+                else if(orientation == 3)
+                    matrix.postRotate(180);
+                else if(orientation == 8)
+                    matrix.postRotate(270);
+                candidPhoto = Bitmap.createBitmap(candidPhoto, 0, 0,
+                        candidPhoto.getWidth(), candidPhoto.getHeight(), matrix, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -394,7 +412,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     private void saveImageToInternalStorage(Bitmap bitmap, String suffix) {
         try{
-            FileOutputStream fos = openFileOutput(v.getName() + suffix, MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(v.getTimeStamp() + suffix, MODE_PRIVATE);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
         } catch (Exception e){
@@ -404,7 +422,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     private void addPhotoNameToFile(String s) {
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_APPEND);
                 fos.write((s).getBytes());
                 fos.close();
             } catch (Exception e) {

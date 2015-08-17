@@ -164,7 +164,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         VolunteerEvent v = (VolunteerEvent) parent.getItemAtPosition(position);
-                        String str = v.getName();
+                        String str = v.getTimeStamp();
                         displayEvent(view, str, actionBar.getSelectedTab());
                     }
                 }
@@ -281,7 +281,7 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     public void displayEvent(View view, String str, android.support.v7.app.ActionBar.Tab tab){
         int tabSelected = tab.getPosition();
         Intent intent = new Intent(this,EventDetails.class);
-        intent.putExtra("event_name",str);
+        intent.putExtra("event_time_stamp",str);
         intent.putExtra("tab",tabSelected);
         startActivity(intent);
     }

@@ -17,17 +17,21 @@ import java.io.FileOutputStream;
 
 public class GetRecurringActivityInfo extends ActionBarActivity {
 
+    private String ts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_recurring_activity_info);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Single Activity");
+        actionBar.setTitle("Recurring Activity");
 
         final EditText nameTxt = (EditText) findViewById(R.id.name_recur);
         final EditText description = (EditText) findViewById(R.id.description_recur);
         final EditText organisation = (EditText) findViewById(R.id.organisation_recur);
+        final EditText supervisorName = (EditText) findViewById(R.id.supervisor_name_recur);
+        final EditText telephoneNumber = (EditText) findViewById(R.id.telephone_recur);
         Button submit = (Button) findViewById(R.id.submit_recur);
 
         submit.setOnClickListener(
@@ -57,22 +61,43 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
                         } else {
                             organisation.setBackgroundColor(Color.TRANSPARENT);
                         }
+                        if(supervisorName.getText().toString().equals("")) {
+                            isError = true;
+                            supervisorName.setBackgroundColor(Color.RED);
+                            supervisorName.setHint("Please enter supervisor's name");
+                        }
+                        else{
+                            supervisorName.setBackgroundColor(Color.TRANSPARENT);
+                        }
+                        if(telephoneNumber.getText().toString().length()!=10) {
+                            isError = true;
+                            telephoneNumber.setBackgroundColor(Color.RED);
+                            telephoneNumber.setHint("Please enter 10 digit phone number");
+                        }
+                        else{
+                            telephoneNumber.setBackgroundColor(Color.TRANSPARENT);
+                        }
                         if(!isError) {
-                            String toFile =
-                                    "No candid photo present;No signature photo present;" +
-                                    nameTxt.getText().toString() + ";" +
-                                            description.getText().toString() + ";" +
-                                            organisation.getText().toString() + ";" + "0;";
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            ts = tsLong.toString();
+                            String toFile = ts + ";" +
+                                    "No candid photo present;No signature photo present;Not submitted;" +
+                                        nameTxt.getText().toString() + ";" +
+                                        description.getText().toString() + ";" +
+                                        organisation.getText().toString() + ";" +
+                                        supervisorName.getText().toString() + ";" +
+                                        telephoneNumber.getText().toString() + ";" +
+                                        "0;";
                             String nameStr = (nameTxt.getText()).toString();
 
                             try {
                                 FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_APPEND);
-                                fos.write((nameStr + ";").getBytes());
+                                fos.write((ts + ";").getBytes());
                                 fos.close();
                             } catch (Exception e) {
                             }
                             try {
-                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
+                                FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_APPEND);
                                 fos.write((toFile).getBytes());
                                 fos.close();
                             } catch (Exception e) {
