@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 
 public class VolunteerEvent extends ActionBarActivity {
+    private String timeStamp;
     private String signaturePath;
     private String candidPath;
     private String submitted;
@@ -20,6 +21,8 @@ public class VolunteerEvent extends ActionBarActivity {
  
 // initialize activity based on internal data
     public VolunteerEvent(String str) {
+        timeStamp = str.substring(0, str.indexOf(';'));
+        str = str.substring(str.indexOf(';') + 1);
         candidPath = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         signaturePath = str.substring(0, str.indexOf(';'));
@@ -41,6 +44,8 @@ public class VolunteerEvent extends ActionBarActivity {
     }
 
     public VolunteerEvent(String str,int i) {
+        timeStamp = str.substring(0, str.indexOf(';'));
+        str = str.substring(str.indexOf(';') + 1);
         candidPath = str.substring(0, str.indexOf(';'));
         str = str.substring(str.indexOf(';') + 1);
         signaturePath = str.substring(0, str.indexOf(';'));
@@ -75,25 +80,12 @@ public class VolunteerEvent extends ActionBarActivity {
             hoursList = null;
     }
 
-    /*
-    public void saveData(){
-        String toFile = name + ";" +  description + ";" + organisation + ";" + hours + ";";
-        if(hoursList!=null){
-            for (int a = 0; a < hoursList.size(); a++){
-                toFile = toFile + hoursList.get(a).toString();
-            }
-        }
-        String fileName = name + ".txt";
-        try {
-            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
-            fos.write(toFile.getBytes());
-            fos.close();
-        } catch (Exception e) {}
+    public String getTimeStamp() {
+        return timeStamp;
     }
-    */
     public String setCandidPhotoPath(String s){
         candidPath = s;
-        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+        String toFile = timeStamp + ";" + candidPath + ";" + signaturePath + ";" + submitted + ";" +
                 name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
@@ -105,7 +97,7 @@ public class VolunteerEvent extends ActionBarActivity {
     }
     public String setSignaturePhotoPath(String s){
         signaturePath = s;
-        String toFile = candidPath + ";" + signaturePath + ";" + "submitted;" +
+        String toFile = timeStamp + ";" + candidPath + ";" + signaturePath + ";" + submitted + ";" +
                 name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
@@ -149,7 +141,7 @@ public class VolunteerEvent extends ActionBarActivity {
         temp += Integer.valueOf(string.substring(0,string.indexOf(';')));
         hours = String.valueOf(temp);
 
-        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+        String toFile = timeStamp + ";" + candidPath + ";" + signaturePath + ";" + submitted + ";" +
                 name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){
@@ -167,7 +159,7 @@ public class VolunteerEvent extends ActionBarActivity {
         temp -= Integer.valueOf(string.substring(0,string.indexOf(';')));
         hours = String.valueOf(temp);
 
-        String toFile = candidPath + ";" + signaturePath + ";" + submitted + ";" +
+        String toFile = timeStamp + ";" + candidPath + ";" + signaturePath + ";" + submitted + ";" +
                 name + ";" +description + ";" + organisation + ";" + supervisorName + ";" +
                 telephoneNumber + ";" + hours + ";";
         if(hoursList!=null){

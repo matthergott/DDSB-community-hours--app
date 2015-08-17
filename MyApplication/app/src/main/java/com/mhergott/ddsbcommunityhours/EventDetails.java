@@ -40,7 +40,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     private static final int SUBMIT_CAMERA_REQUEST = 45454;
     private static final int CANDID_CAMERA_REQUEST = 21212;
     private static final int CANDID_RESULT_LOAD_IMAGE = 12121;
-    String nameTxt;
+    String eventTimeStamp;
     String event;
     int position;
     List<String> namesList = new ArrayList<String>();
@@ -69,18 +69,18 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         Bundle bundle = getIntent().getExtras();
         if (savedInstanceState != null) { // if there was no bundle passed to the activity, use the saved state
             // Restore value of members from saved state
-            nameTxt = savedInstanceState.getString(STATE_EVENT);
+            eventTimeStamp = savedInstanceState.getString(STATE_EVENT);
             position = savedInstanceState.getInt(STATE_POSITION);
         }
         if(bundle!=null){
             // Use values passed to activity in a bundle
-            nameTxt = bundle.getString("event_name");
+            eventTimeStamp = bundle.getString("event_time_stamp");
             position = bundle.getInt("tab");
         }
 
         FileInputStream fis;
         try {
-            fis = openFileInput(nameTxt + ".txt");
+            fis = openFileInput(eventTimeStamp + ".txt");
             byte[] input = new byte[fis.available()];
             while (fis.read(input) != -1) {}
             event = new String(input, "UTF-8");
@@ -119,9 +119,9 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         else
             submittedCheckBox.setImageResource(android.R.drawable.checkbox_on_background);
 
-        if(v.getHours().equals("0")){
-            recurringEmpty = true;
-        }
+        //if(v.getHours().equals("0")){
+        //    recurringEmpty = true;
+        //}
         //check if there are any recurring events listed in the volunteer event passed in
         if(v.getHoursList()!=null) {
             hoursList = v.getHoursList();
@@ -182,6 +182,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             }
         });
 
+        if(Integer.parseInt(v.getHours())>0)
         Toast.makeText(getApplicationContext(), "Click envelope to submit event",
                 Toast.LENGTH_LONG).show();
     }
@@ -202,7 +203,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the event and position passed into the activity
-        savedInstanceState.putString(STATE_EVENT, nameTxt);
+        savedInstanceState.putString(STATE_EVENT, eventTimeStamp);
         savedInstanceState.putInt(STATE_POSITION, position);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -213,12 +214,12 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
         // Inflate a different menu depending on the type of event
         if(v.isSubmitted())
             getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
-        else if(recurring)
-            getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
-        else if(recurringEmpty)
+        else if(!recurring)
+            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+        else if(v.getHours().equals("0"))
             getMenuInflater().inflate(R.menu.menu_event_details_recurring_empty, menu);
         else
-            getMenuInflater().inflate(R.menu.menu_event_details_single, menu);
+            getMenuInflater().inflate(R.menu.menu_event_details_recurring, menu);
         return true;
     }
 
@@ -296,7 +297,6 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     @Override
     public void onDialogDelete(DialogFragment dialog) {
         confirmDelete();
-        return;
     }
     @Override
     public void onDialogCancel(DialogFragment dialog) {
@@ -314,7 +314,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             String toDelete = sharedPref.getString("recurring_event_instance_toDelete", "");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write(v.removeHours(toDelete).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -322,7 +322,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
 
             finish();
             Intent intent = new Intent(this, EventDetails.class);
-            intent.putExtra("event_name", v.getName());
+            intent.putExtra("event_time_stamp", v.getTimeStamp());
             intent.putExtra("tab", 0);
             startActivity(intent);
         }
@@ -406,7 +406,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -454,8 +454,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -464,7 +464,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             //returnToMainActivity();
             //toastImage(candidPhoto);
             Intent intent = new Intent(this,EventDetails.class);
-            intent.putExtra("event_name",v.getName());
+            intent.putExtra("event_time_stamp",v.getTimeStamp());
             intent.putExtra("tab",0);
             startActivity(intent);
         }
@@ -475,8 +475,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getTimeStamp() + "signature.jpeg").getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -524,8 +524,8 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
             saveImageToInternalStorage(signaturePhoto, "signature.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write(v.setSignaturePhotoPath(v.getName() + "signature.jpeg").getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write(v.setSignaturePhotoPath(v.getTimeStamp() + "signature.jpeg").getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -564,7 +564,7 @@ public class EventDetails extends ActionBarActivity implements RecurringEventIns
     }
     private void addPhotoNameToFile(String s) {
         try {
-            FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+            FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_APPEND);
             fos.write((s).getBytes());
             fos.close();
         } catch (Exception e) {

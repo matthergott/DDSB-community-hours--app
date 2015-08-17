@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmAddCandidShotDialog.NoticeDialogListener, ConfirmAddSignatureDialog.NoticeDialogListener {
+public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmAddCandidShotDialog.NoticeDialogListener {
 
     private static final int CANDID_CAMERA_REQUEST = 12345;
     private static final int CANDID_RESULT_LOAD_IMAGE = 54321;
@@ -37,6 +37,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
     private Bitmap candidPhoto;
     private Bitmap signaturePhoto;
     private VolunteerEvent v;
+    private String ts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,24 +120,25 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
                         }
 
                         if(!isError) {
-                            String toFile =
-                                    "No candid photo present;No signature photo present;Not submitted;" +
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            ts = tsLong.toString();
+                            String toFile = ts + ";" +
+                                            "No candid photo present;No signature photo present;Not submitted;" +
                                             nameTxt.getText().toString() + ";" +
                                             description.getText().toString() + ";" +
                                             organisation.getText().toString() + ";" +
                                             supervisorName.getText().toString() + ";" +
                                             telephoneNumber.getText().toString() + ";" +
                                             hours.getText().toString() + ";";
-                            nameStr = (nameTxt.getText()).toString();
 
                             try {
                                 FileOutputStream fos = openFileOutput("CompletedNames.txt", Context.MODE_APPEND);
-                                fos.write((nameStr + ";").getBytes());
+                                fos.write((ts + ";").getBytes());
                                 fos.close();
                             } catch (Exception e) {
                             }
                             try {
-                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+                                FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_PRIVATE);
                                 fos.write((toFile).getBytes());
                                 fos.close();
                             } catch (Exception e) {
@@ -202,12 +204,12 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     @Override
     public void onCandidDialogLater(DialogFragment dialog) {
-        //path is already set to "No candid photo present" so do nothing, move to signature photo
-        requestSignaturePhoto();
+        returnToMainActivity();
     }
     //implemented methods associated methods for candid shot dialog///////////////
 
     ////implemented methods associated methods for signature dialog///////////////
+    /*
     private void requestSignaturePhoto(){
         DialogFragment f = new ConfirmAddSignatureDialog();
         f.show(getSupportFragmentManager(), "confirmAddSignature");
@@ -232,6 +234,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         //path is already set to "No signature photo present" so do nothing, return to main activity
         returnToMainActivity();
     }
+    */
     ////implemented methods associated methods for signature dialog///////////////
 
     @Override
@@ -244,16 +247,16 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(nameStr + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(ts + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
 
             //toastImage(candidPhoto);
 
-            requestSignaturePhoto();
-            //returnToMainActivity();
+            //requestSignaturePhoto();
+            returnToMainActivity();
         }
         else if (requestCode == CANDID_RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
@@ -292,18 +295,18 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(nameStr + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(ts + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
 
-            requestSignaturePhoto();
-            //returnToMainActivity();
+            //requestSignaturePhoto();
+            returnToMainActivity();
             //toastImage(candidPhoto);
         }
 
-
+        /*
         if (requestCode == SIGNATURE_CAMERA_REQUEST && resultCode == RESULT_OK) {
             signaturePhoto = (Bitmap) data.getExtras().get("data");
 
@@ -367,8 +370,8 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
             returnToMainActivity();
         }
+        */
         else{
-            //path is already set to "No signature photo present" so do nothing, return to main activity
             returnToMainActivity();
         }
     }
@@ -382,7 +385,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     private void addPhotoNameToFile(String s) {
         try {
-            FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_PRIVATE);
             fos.write((s).getBytes());
             fos.close();
         } catch (Exception e) {
@@ -391,7 +394,7 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
 
     private void saveImageToInternalStorage(Bitmap bitmap, String suffix) {
         try{
-            FileOutputStream fos = openFileOutput(nameStr + suffix, MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(ts + suffix, MODE_PRIVATE);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
         } catch (Exception e){

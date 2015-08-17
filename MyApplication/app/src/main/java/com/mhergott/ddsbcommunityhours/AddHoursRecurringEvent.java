@@ -253,7 +253,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             String toFile = daySelected + " " + monthSelected + " " + yearSelected + ";" + counter + ";";
             //write the details to the event file
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
                 fos.write(v.addHours(toFile).getBytes());
                 fos.close();
             } catch (Exception e) {
@@ -344,8 +344,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -393,8 +393,8 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_PRIVATE);
-                fos.write((v.setCandidPhotoPath(v.getName() + "candid.jpeg")).getBytes());
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_PRIVATE);
+                fos.write((v.setCandidPhotoPath(v.getTimeStamp() + "candid.jpeg")).getBytes());
                 fos.close();
             } catch (Exception e) {
             }
@@ -412,7 +412,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     private void saveImageToInternalStorage(Bitmap bitmap, String suffix) {
         try{
-            FileOutputStream fos = openFileOutput(v.getName() + suffix, MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(v.getTimeStamp() + suffix, MODE_PRIVATE);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
         } catch (Exception e){
@@ -422,7 +422,7 @@ public class AddHoursRecurringEvent extends ActionBarActivity implements Adapter
 
     private void addPhotoNameToFile(String s) {
             try {
-                FileOutputStream fos = openFileOutput(v.getName() + ".txt", Context.MODE_APPEND);
+                FileOutputStream fos = openFileOutput(v.getTimeStamp() + ".txt", Context.MODE_APPEND);
                 fos.write((s).getBytes());
                 fos.close();
             } catch (Exception e) {

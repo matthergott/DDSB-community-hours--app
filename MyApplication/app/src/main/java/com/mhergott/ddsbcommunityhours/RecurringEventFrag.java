@@ -13,13 +13,10 @@ public class RecurringEventFrag extends Fragment {
     private static final String ARG_DATE = "date_param";
     private static final String ARG_HOURS = "hours_param";
 
-    private String dateParam;
-    private String hoursParam;
-
     private OnFragmentInteractionListener mListener;
 
     /**
-     * Use this factory method to create a new instance of
+     * Use this method to create a new instance of
      * this fragment using the provided parameters.
      */
     public static RecurringEventFrag newInstance(String param1, String param2) {
@@ -39,8 +36,8 @@ public class RecurringEventFrag extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            dateParam = getArguments().getString(ARG_DATE);
-            hoursParam = getArguments().getString(ARG_HOURS);
+            String dateParam = getArguments().getString(ARG_DATE);
+            String hoursParam = getArguments().getString(ARG_HOURS);
         }
     }
 
@@ -51,7 +48,6 @@ public class RecurringEventFrag extends Fragment {
         return inflater.inflate(R.layout.fragment_recurring_event, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -75,18 +71,13 @@ public class RecurringEventFrag extends Fragment {
         mListener = null;
     }
 
-    /**
+    /*
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 

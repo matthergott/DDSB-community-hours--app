@@ -17,6 +17,8 @@ import java.io.FileOutputStream;
 
 public class GetRecurringActivityInfo extends ActionBarActivity {
 
+    private String ts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,9 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
                             telephoneNumber.setBackgroundColor(Color.TRANSPARENT);
                         }
                         if(!isError) {
-                            String toFile =
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            ts = tsLong.toString();
+                            String toFile = ts + ";" +
                                     "No candid photo present;No signature photo present;Not submitted;" +
                                         nameTxt.getText().toString() + ";" +
                                         description.getText().toString() + ";" +
@@ -88,12 +92,12 @@ public class GetRecurringActivityInfo extends ActionBarActivity {
 
                             try {
                                 FileOutputStream fos = openFileOutput("CurrentNames.txt", Context.MODE_APPEND);
-                                fos.write((nameStr + ";").getBytes());
+                                fos.write((ts + ";").getBytes());
                                 fos.close();
                             } catch (Exception e) {
                             }
                             try {
-                                FileOutputStream fos = openFileOutput(nameStr + ".txt", Context.MODE_APPEND);
+                                FileOutputStream fos = openFileOutput(ts + ".txt", Context.MODE_APPEND);
                                 fos.write((toFile).getBytes());
                                 fos.close();
                             } catch (Exception e) {
