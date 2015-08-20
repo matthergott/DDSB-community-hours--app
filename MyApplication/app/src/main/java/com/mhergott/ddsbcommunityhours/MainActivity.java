@@ -187,6 +187,11 @@ public class MainActivity extends ActionBarActivity implements android.support.v
     }
 
     @Override
+    public void onBackPressed() {
+        //so that the back button on the actual device does not work when the main activity is up
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);

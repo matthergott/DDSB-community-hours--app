@@ -242,7 +242,38 @@ public class GetSingleActivityInfo extends ActionBarActivity implements ConfirmA
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CANDID_CAMERA_REQUEST && resultCode == RESULT_OK) {
-            candidPhoto = (Bitmap) data.getExtras().get("data");
+            Uri takenImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(takenImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            selectedCandidImagePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            try {
+                candidPhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), takenImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try { //check if the image is rotated, if it is, rotate it accordingly
+                ExifInterface exif = new ExifInterface(MediaStore.Images.Media.DATA);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+                if(orientation == 6)
+                    matrix.postRotate(90);
+                else if(orientation == 3)
+                    matrix.postRotate(180);
+                else if(orientation == 8)
+                    matrix.postRotate(270);
+                candidPhoto = Bitmap.createBitmap(candidPhoto, 0, 0,
+                        candidPhoto.getWidth(), candidPhoto.getHeight(), matrix, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             saveImageToInternalStorage(candidPhoto, "candid.jpeg");
 
