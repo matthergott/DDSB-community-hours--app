@@ -301,7 +301,7 @@ public class AddPersonalInfo extends ActionBarActivity implements AdapterView.On
     @Override
     public void onDialogNext6(DialogFragment dialog) {
 		returnToMainActivity();
-		Toast.makeText(getApplicationContext(), "Click the three dots up top to get started",
+		Toast.makeText(getApplicationContext(), "Click the three dots at the top to get started",
 							  Toast.LENGTH_LONG).show();
 		finish();
     }
